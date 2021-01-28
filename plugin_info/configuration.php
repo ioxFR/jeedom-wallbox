@@ -27,13 +27,13 @@ if (!isConnect()) {
     <div class="form-group">
       <label class="col-sm-3 control-label">{{Nom d'utilisateur}}</label>
       <div class="col-sm-7">
-        <input class="configKey form-control" data-l1key="username"/>
+        <input class="configKey form-control" data-l1key="username" required/>
       </div>
     </div>
     <div class="form-group">
       <label class="col-sm-3 control-label">{{Mot de passe}}</label>
       <div class="col-sm-7">
-        <input class="configKey form-control" data-l1key="password" type="password"/>
+        <input class="configKey form-control" data-l1key="password" type="password" required/>
       </div>
     </div>
   </fieldset>

@@ -29,17 +29,34 @@ class wallbox extends eqLogic {
    
    /*     * ***********************Methode static*************************** */
    
-   /*
-   * Fonction exécutée automatiquement toutes les minutes par Jeedom
+   // Fonction exécutée automatiquement toutes les minutes par Jeedom
    public static function cron() {
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+         if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
+             $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
+             if (!is_object($cmd)) {//Si la commande n'existe pas
+               continue; //continue la boucle
+             }
+             $cmd->execCmd(); // la commande existe on la lance
+         }
+     }
    }
-   */
    
-   /*
-   * Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
+   
+   
+   // Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
    public static function cron5() {
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+         if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
+             $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
+             if (!is_object($cmd)) {//Si la commande n'existe pas
+               continue; //continue la boucle
+             }
+             $cmd->execCmd(); // la commande existe on la lance
+         }
+     }
    }
-   */
+   
    
    /*
    * Fonction exécutée automatiquement toutes les 10 minutes par Jeedom
