@@ -1,0 +1,23 @@
+{
+	"id" : "wallbox",
+	"name" : "WallBox",
+	"description" : {
+		"fr_FR": "Plugin pour la récupération des données d'une station de recharge WallBox",
+		"en_US": "Plugin to retrieve data from wallbox charge station"
+	},
+	"licence" : "MIT",
+	"author" : "Valentin LECERF",
+	"require" : "4.0.0",
+	"category" : "energy",
+	"hasDependency" : false,
+	"hasOwnDeamon" : false,
+	"maxDependancyInstallTime" : 0,
+	"changelog" : "https://jeedom.github.io/plugin-template/#language#/changelog",
+	"documentation" : "https://jeedom.github.io/plugin-template/#language#/",
+	"link" : {
+		"forum":"Lien vers le forum",
+		"video" : "Lien vers une video"
+	},
+	"language" : ["fr_FR","en_US"],
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
+}
