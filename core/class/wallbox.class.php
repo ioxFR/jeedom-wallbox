@@ -130,6 +130,18 @@ class wallbox extends eqLogic {
       $power->setSubType('string');
       $power->save();
 
+      // max power available
+      $maxpower = $this->getCmd(null, 'maxpower');
+      if (!is_object($maxpower)) {
+         $maxpower = new wallboxCmd();
+         $maxpower->setName(__('Puissance maximum', __FILE__));
+      }
+      $maxpower->setLogicalId('maxpower');
+      $maxpower->setEqLogic_id($this->getId());
+      $maxpower->setType('info');
+      $maxpower->setSubType('string');
+      $maxpower->save();
+
       // charging speed
       $speed = $this->getCmd(null, 'speed');
       if (!is_object($speed)) {
@@ -335,6 +347,8 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
          $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('chargestatus', $info['state_of_charge']);
+         $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
+         
          return;
       }
       
