@@ -99,19 +99,81 @@ class wallbox extends eqLogic {
    public function preSave() {
       
    }
-
+   
    public function postSave() {
-      $info = $this->getCmd(null, 'charger');
-      if (!is_object($info)) {
-         $info = new wallboxCmd();
-         $info->setName(__('Informations', __FILE__));
+      // Charging power
+      $power = $this->getCmd(null, 'power');
+      if (!is_object($power)) {
+         $power = new wallboxCmd();
+         $power->setName(__('Puissance', __FILE__));
       }
-      $info->setLogicalId('charger');
-      $info->setEqLogic_id($this->getId());
-      $info->setType('info');
-      $info->setSubType('string');
-      $info->save();
+      $power->setLogicalId('power');
+      $power->setEqLogic_id($this->getId());
+      $power->setType('info');
+      $power->setSubType('string');
+      $power->save();
+
+      // charging speed
+      $speed = $this->getCmd(null, 'speed');
+      if (!is_object($speed)) {
+         $speed = new wallboxCmd();
+         $speed->setName(__('Vitesse de charge', __FILE__));
+      }
+      $speed->setLogicalId('speed');
+      $speed->setEqLogic_id($this->getId());
+      $speed->setType('info');
+      $speed->setSubType('string');
+      $speed->save();
+
+      // state of charge
+      $chargestatus = $this->getCmd(null, 'chargestatus');
+      if (!is_object($chargestatus)) {
+         $chargestatus = new wallboxCmd();
+         $chargestatus->setName(__('Statut de la charge', __FILE__));
+      }
+      $chargestatus->setLogicalId('chargestatus');
+      $chargestatus->setEqLogic_id($this->getId());
+      $chargestatus->setType('info');
+      $chargestatus->setSubType('string');
+      $chargestatus->save();
+
+      // last sync
+      $lastsync = $this->getCmd(null, 'lastsync');
+      if (!is_object($lastsync)) {
+         $lastsync = new wallboxCmd();
+         $lastsync->setName(__('Dernière Synchronisation', __FILE__));
+      }
+      $lastsync->setLogicalId('lastsync');
+      $lastsync->setEqLogic_id($this->getId());
+      $lastsync->setType('info');
+      $lastsync->setSubType('string');
+      $lastsync->save();
       
+      //status
+      $status = $this->getCmd(null, 'status');
+      if (!is_object($status)) {
+         $status = new wallboxCmd();
+         $status->setName(__('Statut', __FILE__));
+      }
+      $status->setLogicalId('status');
+      $status->setEqLogic_id($this->getId());
+      $status->setType('info');
+      $status->setSubType('string');
+      $status->save();
+      
+      // Name
+      $name = $this->getCmd(null, 'name');
+      if (!is_object($name)) {
+         $name = new wallboxCmd();
+         $name->setName(__('Name', __FILE__));
+      }
+      $name->setLogicalId('name');
+      $name->setEqLogic_id($this->getId());
+      $name->setType('info');
+      $name->setSubType('string');
+      $name->save();
+      
+      // Refresh action
       $refresh = $this->getCmd(null, 'refresh');
       if (!is_object($refresh)) {
          $refresh = new wallboxCmd();
@@ -140,13 +202,13 @@ class wallbox extends eqLogic {
    // Function to get authentication JWT based on basic auth
    public function getWallboxToken(){     
       $baseurl = "https://api.wall-box.com/";
-log::add('wallbox', 'debug', 'in authentication ' );
+      log::add('wallbox', 'debug', 'in authentication ' );
       // AUTHENTICATION
       //$username = $this->getConfiguration("username");
       //$password = $this->getConfiguration("password");
-     $username = config::byKey("username", "wallbox");
-     $password = config::byKey("password", "wallbox");
-     
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      
       // We encode in base64
       $authenticationencoded = base64_encode($username.":".$password);
       // we do the request to get token
@@ -162,9 +224,9 @@ log::add('wallbox', 'debug', 'in authentication ' );
       $result = file_get_contents($baseurl.'auth/token/user', false, $context);
       $objectresult = json_decode($result,true);
       
-
+      
       if($objectresult['status'] == "200"){
-        log::add('wallbox', 'debug', 'Authentication ' . json_decode($result,true));
+         log::add('wallbox', 'debug', 'Authentication ' . json_decode($result,true));
          $token = $objectresult['jwt'];
          return $token;
       }
@@ -174,12 +236,13 @@ log::add('wallbox', 'debug', 'in authentication ' );
    // Function to get a list of chargers
    
    // Function to get charger status
-   public function getChargerStatus($chargerId){
+   public function getChargerStatus(){
       $baseurl = "https://api.wall-box.com/";
-     log::add('wallbox', 'debug', 'start for charger '. $chargerId);
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'start for charger '. $chargerId);
       $jwt = $this->getWallboxToken();
-     
-     log::add('wallbox', 'debug', 'jwt '. $jwt);
+      
+      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
          $opts = array('http' =>
          array(
@@ -191,9 +254,8 @@ log::add('wallbox', 'debug', 'in authentication ' );
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'chargers/status/'.$chargerId, false, $context);
-         //$objectresult = json_decode($result,true);
-        log::add('wallbox', 'debug', 'charger result '. $result);
-         return $result;
+         $objectresult = json_decode($result,true);
+         return $objectresult;
       }
       else{
          throw new Exception("User is not authenticated");
@@ -240,24 +302,28 @@ class wallboxCmd extends cmd {
       return true;
    }
    */
-
-  
+   
+   
    
    // Exécution d'une commande  
    public function execute($_options = null) {
-           $eqlogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
-
-     if ($this->getLogicalId() == 'refresh') {
-        $chargerid = $this->getConfiguration("chargerid");
-            $info = $this->getEqLogic()->getChargerStatus($chargerid);
-       $eqlogic->checkAndUpdateCmd('charger', $info);
-            return;
-        }
-
+      $eqlogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
+      
+      if ($this->getLogicalId() == 'refresh') {
+         
+         $info = $this->getEqLogic()->getChargerStatus();
+         $eqlogic->checkAndUpdateCmd('name', $info['name']);
+         $eqlogic->checkAndUpdateCmd('lastsync', $info['last_sync']);
+         $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
+         $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
+         $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
+         $eqlogic->checkAndUpdateCmd('chargestatus', $info['state_of_charge']);
+         return;
       }
       
-      /*     * **********************Getteur Setteur*************************** */
    }
    
-   
-   
+   /*     * **********************Getteur Setteur*************************** */
+}
+
+
