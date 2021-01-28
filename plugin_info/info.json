@@ -12,8 +12,8 @@
 	"hasDependency" : false,
 	"hasOwnDeamon" : false,
 	"maxDependancyInstallTime" : 0,
-	"changelog" : "https://github.com/ioxFR/jeedom-wallbox/blob/master/docs/#language#/changelog",
-	"documentation" : "https://github.com/ioxFR/jeedom-wallbox/blob/master/docs/#language#/",
+	"changelog" : "https://ioxfr.github.io/jeedom-wallbox/#language#/changelog",
+	"documentation" : "https://ioxfr.github.io/jeedom-wallbox/#language#/",
 	"language" : ["fr_FR","en_US"],
 	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"]
 }
