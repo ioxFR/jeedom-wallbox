@@ -127,7 +127,10 @@ class wallbox extends eqLogic {
       $power->setLogicalId('power');
       $power->setEqLogic_id($this->getId());
       $power->setType('info');
-      $power->setSubType('string');
+      $power->setSubType('numeric');
+		$power->setUnite('Amp');
+      $power->setConfiguration('minValue' , '0');
+      $power->setConfiguration('maxValue' , '32');
       $power->save();
 
       // max power available
@@ -139,7 +142,10 @@ class wallbox extends eqLogic {
       $maxpower->setLogicalId('maxpower');
       $maxpower->setEqLogic_id($this->getId());
       $maxpower->setType('info');
-      $maxpower->setSubType('string');
+      $maxpower->setSubType('numeric');
+		$maxpower->setUnite('Amp');
+      $power->setConfiguration('minValue' , '0');
+      $power->setConfiguration('maxValue' , '32');
       $maxpower->save();
 
       // charging speed
@@ -151,7 +157,10 @@ class wallbox extends eqLogic {
       $speed->setLogicalId('speed');
       $speed->setEqLogic_id($this->getId());
       $speed->setType('info');
-      $speed->setSubType('string');
+      $speed->setSubType('numeric');
+      $power->setConfiguration('minValue' , '0');
+      $power->setConfiguration('maxValue' , '32');
+		$speed->setUnite('Amp/h');
       $speed->save();
 
       // state of charge
@@ -213,6 +222,17 @@ class wallbox extends eqLogic {
       $refresh->setType('action');
       $refresh->setSubType('other');
       $refresh->save();
+
+      // TODO: CRON Configuration
+     /* $cron = cron::byClassAndFunction('weather', 'updateWeatherData', array('weather_id' => intval($this->getId())));
+      if (!is_object($cron)) {
+          $cron = new cron();
+          $cron->setClass('weather');
+          $cron->setFunction('updateWeatherData');
+          $cron->setOption(array('weather_id' => intval($this->getId())));
+      }
+      $cron->setSchedule($this->getConfiguration('refreshCron', CRON));
+      */
    }
    
    // Fonction exécutée automatiquement après la sauvegarde (création ou mise à jour) de l'équipement 
