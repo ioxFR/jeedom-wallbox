@@ -301,7 +301,11 @@ class wallbox extends eqLogic {
          
          $result = file_get_contents($baseurl.'v3/chargers/groups', false, $context);
          $objectresult = json_decode($result,true);
-         return $objectresult;
+
+         // We return only struct of chargers
+         $chargers = $objectresult['result']['groups'][0]['chargers'];
+         log::add('wallbox', 'information', 'charger list '. $chargers);
+         return $chargers;
       }
       else{
          throw new Exception("User is not authenticated");
