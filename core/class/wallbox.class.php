@@ -283,7 +283,30 @@ class wallbox extends eqLogic {
    }
    
    // Function to get a list of chargers
-   
+   public function getChargerList(){
+      $baseurl = "https://api.wall-box.com/";
+      log::add('wallbox', 'debug', 'start charger list');
+      $jwt = $this->getWallboxToken();
+      
+      log::add('wallbox', 'debug', 'jwt '. $jwt);
+      if($jwt != null){
+         $opts = array('http' =>
+         array(
+            'method'  => 'GET',
+            'header'  => 'Authorization: Bearer '.$jwt
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+         
+         $result = file_get_contents($baseurl.'v3/chargers/groups', false, $context);
+         $objectresult = json_decode($result,true);
+         return $objectresult;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
    // Function to get charger status
    public function getChargerStatus(){
       $baseurl = "https://api.wall-box.com/";
