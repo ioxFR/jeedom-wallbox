@@ -5,7 +5,7 @@ Jeedom plugin implementation for wallbox charger solution.
 ## Usage
 - Install plugin via market
 - Enter in configuration your username and password of My Wallbox account
-- Create new object and fill the charger ID (Can be found in url of My Wallbox account when you open your charger)
+- Create new object and a charger in dropdownlist
 - Add the created object to your dashboard and enjoy!
 
 ## How to get it
