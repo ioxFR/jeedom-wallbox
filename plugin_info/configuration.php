@@ -21,7 +21,12 @@ if (!isConnect()) {
   include_file('desktop', '404', 'php');
   die();
 }
+$username = config::byKey("username", "wallbox");
+$password = config::byKey("password", "wallbox");
+if($username == null || $password == null){
 ?>
+<p style="color:red">{{Username & Password are required for plugin.}}</p>
+<?php } ?>
 <form class="form-horizontal">
   <fieldset>
     <div class="form-group">

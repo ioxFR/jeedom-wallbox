@@ -7,7 +7,16 @@ $plugin = plugin::byId('wallbox');
 sendVarToJS('eqType', $plugin->getId());
 $eqLogics = eqLogic::byType($plugin->getId());
 if(count($eqLogics) != 0){
+	$username = config::byKey("username", "wallbox");
+	$password = config::byKey("password", "wallbox");
+	if($username != null || $password != null){
 $chargers = $eqLogics[0]->getChargerList();
+}
+else{
+	log::add('wallbox', 'error', 'Plugin is not configured with username & password wallbox account.' );
+	$charger = [];
+}
+
 }else{$charger = [];}
 ?>
 
