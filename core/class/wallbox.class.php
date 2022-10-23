@@ -94,7 +94,11 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement avant la création de l'équipement 
    public function preInsert() {
-      
+      $username = config::byKey("username", "wallbox");
+$password = config::byKey("password", "wallbox");
+if($username == null || $password == null){
+   throw new Exception("You must configure username and password to be able to use this plugin");
+}
    }
    
    // Fonction exécutée automatiquement après la création de l'équipement 
