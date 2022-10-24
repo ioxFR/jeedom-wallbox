@@ -353,7 +353,7 @@ class wallbox extends eqLogic {
       
       
       if($objectresult['status'] == "200"){
-         log::add('wallbox', 'debug', 'Authentication ' . json_decode($result,true));
+         log::add('wallbox', 'information', 'Authentication Success');
          $token = $objectresult['jwt'];
          return $token;
       }
@@ -366,7 +366,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'start charger list');
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null){
          $opts = array('http' =>
          array(
@@ -396,7 +395,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'start for charger '. $chargerId);
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
          $opts = array('http' =>
          array(
@@ -424,7 +422,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
 
          $data = '{"action":1}'; //resume id
@@ -444,6 +441,8 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);
+         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
+
          $objectresult = json_decode($result,true);
          return $objectresult;
       }
@@ -460,7 +459,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
 
          $data = '{"locked":1}'; //resume id
@@ -480,6 +478,8 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
+         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
+
          $objectresult = json_decode($result,true);
          return $objectresult;
       }
@@ -496,7 +496,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
 
          $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //resume id
@@ -512,6 +511,7 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
+         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
          $objectresult = json_decode($result,true);
          return $objectresult;
       }
