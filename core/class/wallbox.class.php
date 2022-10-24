@@ -444,13 +444,32 @@ class wallboxCmd extends cmd {
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
          $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
+
+         $statusid=$info['status_id'];
+
          $eqlogic->checkAndUpdateCmd('status_id', $info['status_id']);
          $eqlogic->checkAndUpdateCmd('status', $this->statustotext($info['status_id']));
-         $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
+         
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
-         $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
-         $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
+
+         if($statusid == 194){
+            $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
+            $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
+            $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
+            $eqlogic->getLogicalId('energyconsumed')->setIsVisible(true);
+            $eqlogic->getLogicalId('chargingtime')->setIsVisible(true);
+            $eqlogic->getLogicalId('power')->setIsVisible(true);
+
+         }
+         else
+         {
+            $eqlogic->getLogicalId('energyconsumed')->setIsVisible(false);
+            $eqlogic->getLogicalId('chargingtime')->setIsVisible(false);
+            $eqlogic->getLogicalId('power')->setIsVisible(false);
+         }
+
+
          return;
       }
       
