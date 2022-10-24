@@ -457,18 +457,28 @@ class wallboxCmd extends cmd {
             $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
             $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
             $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
-            $eqlogic->byLogicalId('energyconsumed',null)->setIsVisible(true);
-            $eqlogic->byLogicalId('chargingtime',null)->setIsVisible(true);
-            $eqlogic->byLogicalId('power',null)->setIsVisible(true);
+            $obj = $eqlogic->getCmd(null, 'energyconsumed');
+            $obj->setIsVisible(1);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargingtime');
+            $obj->setIsVisible(1);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'power');
+            $obj->setIsVisible(1);
+            $obj->save();
 
          }
          else
          {
             $obj = $eqlogic->getCmd(null, 'energyconsumed');
-            $obj->setIsVisible(false);
+            $obj->setIsVisible(0);
             $obj->save();
-            /*$this->getEqLogic()->byLogicalId('chargingtime',null)->setIsVisible(false);
-            $this->getEqLogic()->byLogicalId('power',null)->setIsVisible(false);*/
+            $obj = $eqlogic->getCmd(null, 'chargingtime');
+            $obj->setIsVisible(0);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'power');
+            $obj->setIsVisible(0);
+            $obj->save();
          }
 
 
