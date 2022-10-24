@@ -401,7 +401,7 @@ class wallboxCmd extends cmd {
          
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
-         $eqlogic->checkAndUpdateCmd('lastsync', $info['last_sync']);
+         $eqlogic->checkAndUpdateCmd('lastsync', utctolocal($info['last_sync']));
          $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
          $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
@@ -411,6 +411,19 @@ class wallboxCmd extends cmd {
          return;
       }
       
+   }
+
+   // Utility
+   public function utctolocal($date)
+   {
+      $time = new DateTime($date, new DateTimeZone('UTC'));
+      $tm_tz_from = $timeZone;
+      $tm_tz_to = new DateTimeZone(date_default_timezone_get());
+      $dt = new DateTime($date, new DateTimeZone($tm_tz_from));
+      $dt->setTimeZone(new DateTimeZone($tm_tz_to));
+      $utc_time_from =$dt->format("d-m-Y h:i:s");
+
+      return $utc_time_from;
    }
    
    /*     * **********************Getteur Setteur*************************** */
