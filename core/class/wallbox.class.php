@@ -155,7 +155,7 @@ class wallbox extends eqLogic {
       }
       $maxpower->setLogicalId('maxpower');
       $maxpower->setEqLogic_id($this->getId());
-      $maxpower->setType('info');
+      $maxpower->setType('action');
       $maxpower->setSubType('numeric');
 		$maxpower->setUnite('Amp');
       $maxpower->setConfiguration('minValue' , '0');
@@ -277,16 +277,31 @@ class wallbox extends eqLogic {
       $chargecontrol->save();
 
       // Lock command action
-      $chargecontrol = $this->getCmd(null, 'lockcontrol');
-      if (!is_object($chargecontrol)) {
-         $chargecontrol = new wallboxCmd();
-         $chargecontrol->setName(__('Verouillage du chargeur', __FILE__));
+      $lockcontrol = $this->getCmd(null, 'lockcontrol');
+      if (!is_object($lockcontrol)) {
+         $lockcontrol = new wallboxCmd();
+         $lockcontrol->setName(__('Verouillage du chargeur', __FILE__));
       }
-      $chargecontrol->setEqLogic_id($this->getId());
-      $chargecontrol->setLogicalId('lockcontrol');
-      $chargecontrol->setType('action');
-      $chargecontrol->setSubType('other');
-      $chargecontrol->save();
+      $lockcontrol->setEqLogic_id($this->getId());
+      $lockcontrol->setLogicalId('lockcontrol');
+      $lockcontrol->setType('action');
+      $lockcontrol->setSubType('other');
+      $lockcontrol->save();
+
+      // Amp command action
+     /* $maxamp = $this->getCmd(null, 'maxamp');
+      if (!is_object($maxamp)) {
+         $maxamp = new wallboxCmd();
+         $maxamp->setName(__('Amperage maximum', __FILE__));
+      }
+      $maxamp->setEqLogic_id($this->getId());
+      $maxamp->setLogicalId('maxamp');
+      $maxamp->setType('action');
+      $maxamp->setSubType('numeric');
+		$maxamp->setUnite('Amp');
+      $maxamp->setConfiguration('minValue' , '1');
+      $maxamp->setConfiguration('maxValue' , '32');
+      $maxamp->save();*/
 
       // TODO: CRON Configuration
      /* $cron = cron::byClassAndFunction('weather', 'updateWeatherData', array('weather_id' => intval($this->getId())));
@@ -648,6 +663,14 @@ class wallboxCmd extends cmd {
             // in pause, we resume charge
             $this->getEqLogic()->defineLockState(false);
          }
+      }
+      else if($this->getLogicalId() == 'maxpower')
+      {
+         $obj = $eqlogic->getCmd(null, 'maxpower');
+
+         // charging, we switch to pause
+         $this->getEqLogic()->defineMaxAmp($obj->getCmdValue());
+
       }
    }
 
