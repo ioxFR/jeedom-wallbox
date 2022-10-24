@@ -464,7 +464,9 @@ class wallboxCmd extends cmd {
          }
          else
          {
-            $eqlogic->getCmd(null, 'energyconsumed')->setIsVisible(false);
+            $obj = $eqlogic->getCmd(null, 'energyconsumed');
+            $obj->setIsVisible(false);
+            $obj->save();
             /*$this->getEqLogic()->byLogicalId('chargingtime',null)->setIsVisible(false);
             $this->getEqLogic()->byLogicalId('power',null)->setIsVisible(false);*/
          }
