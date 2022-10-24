@@ -105,10 +105,10 @@ class wallbox extends eqLogic {
    // Fonction exécutée automatiquement avant la création de l'équipement 
    public function preInsert() {
       $username = config::byKey("username", "wallbox");
-$password = config::byKey("password", "wallbox");
-if($username == null || $password == null){
-   throw new Exception("You must configure username and password to be able to use this plugin");
-}
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
    }
    
    // Fonction exécutée automatiquement après la création de l'équipement 
@@ -203,7 +203,7 @@ if($username == null || $password == null){
 
       // Charging Time
       $chargingtime = $this->getCmd(null, 'chargingtime');
-      if (!is_object($lastsync)) {
+      if (!is_object($chargingtime)) {
          $chargingtime = new wallboxCmd();
          $chargingtime->setName(__('Temps de charge', __FILE__));
       }
@@ -215,7 +215,7 @@ if($username == null || $password == null){
 
       // Energie consommée
       $energyconsumed = $this->getCmd(null, 'energyconsumed');
-      if (!is_object($lastsync)) {
+      if (!is_object($energyconsumed)) {
          $energyconsumed = new wallboxCmd();
          $energyconsumed->setName(__('Energie consommée', __FILE__));
       }
