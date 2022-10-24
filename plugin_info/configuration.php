@@ -26,7 +26,9 @@ $password = config::byKey("password", "wallbox");
 if($username == null || $password == null){
 ?>
 <p style="color:red;text-align: center;font-weight: bold;">{{Username & Password are required for plugin.}}</p>
-<?php } ?>
+<?php 
+throw new Exception("A username and password is required for the plugin to work")
+} ?>
 <form class="form-horizontal">
   <fieldset>
     <div class="form-group">
