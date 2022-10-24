@@ -449,7 +449,7 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
-         $eqlogic->checkAndUpdateCmd('chargingtime',$info['charging_time']);// in second
+         $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
          $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
          return;
       }
@@ -473,6 +473,12 @@ class wallboxCmd extends cmd {
             return 'En pause';
             break;
       }
+   }
+
+   public function sectohhmmss($seconds)
+   {
+      $seconds = round($seconds);
+      return sprintf('%02d:%02d:%02d', ($seconds/ 3600),($seconds/ 60 % 60), $seconds% 60);
    }
 
    /*     * **********************Getteur Setteur*************************** */
