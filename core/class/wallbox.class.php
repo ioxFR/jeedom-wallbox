@@ -264,6 +264,18 @@ class wallbox extends eqLogic {
       $refresh->setSubType('other');
       $refresh->save();
 
+            // Charge command action
+            $chargecontrol = $this->getCmd(null, 'chargecontrol');
+            if (!is_object($chargecontrol)) {
+               $chargecontrol = new wallboxCmd();
+               $chargecontrol->setName(__('Contrôle de la charge', __FILE__));
+            }
+            $chargecontrol->setEqLogic_id($this->getId());
+            $chargecontrol->setLogicalId('chargecontrol');
+            $chargecontrol->setType('action');
+            $chargecontrol->setSubType('other');
+            $chargecontrol->save();
+
       // TODO: CRON Configuration
      /* $cron = cron::byClassAndFunction('weather', 'updateWeatherData', array('weather_id' => intval($this->getId())));
       if (!is_object($cron)) {
@@ -377,6 +389,42 @@ class wallbox extends eqLogic {
       }
    }
 
+   // function to pause or resume charging
+   public function defineChargingState($resume)
+   {
+      $baseurl = "https://api.wall-box.com/v3/";
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
+      $jwt = $this->getWallboxToken();
+      
+      log::add('wallbox', 'debug', 'jwt '. $jwt);
+      if($jwt != null && $chargerId != null){
+
+         $data = '{"action":1}'; //resume id
+         if(!$resume)
+         {
+            $data = '{"action":2}'; // pause id
+         }
+
+         $opts = array('http' =>
+         array(
+            'method'  => 'GET',
+            'header'  => 'Authorization: Bearer '.$jwt,
+            'content' => http_build_query($data)
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+         
+         $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);
+         $objectresult = json_decode($result,true);
+         return $objectresult;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
+
       // Utility
       public function utctolocal($date)
       {
@@ -466,7 +514,9 @@ class wallboxCmd extends cmd {
             $obj = $eqlogic->getCmd(null, 'power');
             $obj->setIsVisible(1);
             $obj->save();
-
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setIsVisible(1);
+            $obj->save();
          }
          else
          {
@@ -479,12 +529,30 @@ class wallboxCmd extends cmd {
             $obj = $eqlogic->getCmd(null, 'power');
             $obj->setIsVisible(0);
             $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setIsVisible(0);
+            $obj->save();
          }
 
 
          return;
       }
-      
+      else if ($this->getLogicalId() == 'chargecontrol')
+      {
+         $info = $this->getEqLogic()->getChargerStatus();
+         $statusid=$info['status_id'];
+
+         if($statusid == 194)
+         {
+            // charging, we switch to pause
+            $this->getEqLogic()->getChargerStatus(false);
+         }
+         else if($statusid == 182)
+         {
+            // in pause, we resume charge
+            $this->getEqLogic()->defineChargingState(true);
+         }
+      }
    }
 
    public function statustotext($statusid)
