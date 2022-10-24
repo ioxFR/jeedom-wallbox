@@ -440,7 +440,7 @@ class wallbox extends eqLogic {
    // function to lock/unlock a charger
    public function defineLockState($locked)
    {
-      $baseurl = "https://api.wall-box.com/v3/";
+      $baseurl = "https://api.wall-box.com/v2/";
       $chargerId = $this->getConfiguration("chargerid");
       log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
       $jwt = $this->getWallboxToken();
@@ -464,7 +464,7 @@ class wallbox extends eqLogic {
          
          $context  = stream_context_create($opts);
          
-         $result = file_get_contents($baseurl.'chargers/'.$chargerId, false, $context);
+         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
          $objectresult = json_decode($result,true);
          return $objectresult;
       }
