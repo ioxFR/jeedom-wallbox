@@ -401,7 +401,7 @@ class wallboxCmd extends cmd {
          
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
-         $eqlogic->checkAndUpdateCmd('lastsync', utctolocal($info['last_sync']));
+         $eqlogic->checkAndUpdateCmd('lastsync', $this->utctolocal($info['last_sync']));
          $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
          $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
