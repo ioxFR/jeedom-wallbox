@@ -158,12 +158,12 @@ if($username == null || $password == null){
       $maxpower->setType('info');
       $maxpower->setSubType('numeric');
 		$maxpower->setUnite('Amp');
-      $power->setConfiguration('minValue' , '0');
-      $power->setConfiguration('maxValue' , '32');
+      $maxpower->setConfiguration('minValue' , '0');
+      $maxpower->setConfiguration('maxValue' , '32');
       $maxpower->save();
 
       // charging speed
-      $speed = $this->getCmd(null, 'speed');
+      /*$speed = $this->getCmd(null, 'speed');
       if (!is_object($speed)) {
          $speed = new wallboxCmd();
          $speed->setName(__('Vitesse de charge', __FILE__));
@@ -175,10 +175,10 @@ if($username == null || $password == null){
       $power->setConfiguration('minValue' , '0');
       $power->setConfiguration('maxValue' , '32');
 		$speed->setUnite('Amp/h');
-      $speed->save();
+      $speed->save();*/
 
       // state of charge
-      $chargestatus = $this->getCmd(null, 'chargestatus');
+      /*$chargestatus = $this->getCmd(null, 'chargestatus');
       if (!is_object($chargestatus)) {
          $chargestatus = new wallboxCmd();
          $chargestatus->setName(__('Statut de la charge', __FILE__));
@@ -187,7 +187,7 @@ if($username == null || $password == null){
       $chargestatus->setEqLogic_id($this->getId());
       $chargestatus->setType('info');
       $chargestatus->setSubType('string');
-      $chargestatus->save();
+      $chargestatus->save();*/
 
       // last sync
       $lastsync = $this->getCmd(null, 'lastsync');
@@ -200,6 +200,33 @@ if($username == null || $password == null){
       $lastsync->setType('info');
       $lastsync->setSubType('string');
       $lastsync->save();
+
+      // Charging Time
+      $chargingtime = $this->getCmd(null, 'chargingtime');
+      if (!is_object($lastsync)) {
+         $chargingtime = new wallboxCmd();
+         $chargingtime->setName(__('Temps de charge', __FILE__));
+      }
+      $chargingtime->setLogicalId('chargingtime');
+      $chargingtime->setEqLogic_id($this->getId());
+      $chargingtime->setType('info');
+      $chargingtime->setSubType('string');
+      $chargingtime->save();
+
+      // Energie consommée
+      $energyconsumed = $this->getCmd(null, 'energyconsumed');
+      if (!is_object($lastsync)) {
+         $energyconsumed = new wallboxCmd();
+         $energyconsumed->setName(__('Energie consommée', __FILE__));
+      }
+      $energyconsumed->setLogicalId('energyconsumed');
+      $energyconsumed->setEqLogic_id($this->getId());
+      $energyconsumed->setType('info');
+      $energyconsumed->setSubType('numeric');
+		$energyconsumed->setUnite('Kwh');
+      $energyconsumed->setConfiguration('minValue' , '0');
+      $energyconsumed->setConfiguration('maxValue' , '60');
+      $energyconsumed->save();
       
       //status
       $status = $this->getCmd(null, 'status');
@@ -417,15 +444,35 @@ class wallboxCmd extends cmd {
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
          $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
-         $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
+         $eqlogic->checkAndUpdateCmd('status_id', $info['status_id']);
+         $eqlogic->checkAndUpdateCmd('status', $this->statustotext($info['status_id']));
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
-         $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
-         $eqlogic->checkAndUpdateCmd('chargestatus', $info['state_of_charge']);
+         //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
-         
+         $eqlogic->checkAndUpdateCmd('chargingtime',$info['charging_time']);// in second
+         $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
          return;
       }
       
+   }
+
+   public function statustotext($statusid)
+   {
+      switch($statusid)
+      {
+         case 209:
+            return 'Verrouillée';
+            break;
+         case 161:
+            return 'En attente';
+            break;
+         case 194:
+            return 'En charge';
+            break;
+         case 182:
+            return 'En pause';
+            break;
+      }
    }
 
    /*     * **********************Getteur Setteur*************************** */
