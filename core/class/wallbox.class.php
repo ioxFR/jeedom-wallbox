@@ -354,12 +354,10 @@ if($username == null || $password == null){
       public function utctolocal($date)
       {
          log::add('wallbox', 'debug', 'starting date conversion from UTC to local');
-         $time = new DateTime($date, new DateTimeZone('UTC'));
-         $tm_tz_from = $timeZone;
          $localtimezone = date_default_timezone_get();
          log::add('wallbox', 'debug', 'local timezone is defined on '.$localtimezone);
          $tm_tz_to = new DateTimeZone($localtimezone);
-         $dt = new DateTime($date, new DateTimeZone($tm_tz_from));
+         $dt = new DateTime($date, new DateTimeZone('UTC'));
          $dt->setTimeZone(new DateTimeZone($tm_tz_to));
          $utc_time_from =$dt->format("d-m-Y h:i:s");
          log::add('wallbox', 'debug', 'Date converted '.$utc_time_from);
