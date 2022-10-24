@@ -473,6 +473,38 @@ class wallbox extends eqLogic {
       }
    }
 
+   // function to define max amp of a charge
+   public function defineMaxAmp($ampvalue)
+   {
+      $baseurl = "https://api.wall-box.com/v2/";
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
+      $jwt = $this->getWallboxToken();
+      
+      log::add('wallbox', 'debug', 'jwt '. $jwt);
+      if($jwt != null && $chargerId != null){
+
+         $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //resume id
+
+         $opts = array('http' =>
+         array(
+            'method'  => 'GET',
+            'header'  => 'Authorization: Bearer '.$jwt,
+            'content' => http_build_query($data)
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+         
+         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
+         $objectresult = json_decode($result,true);
+         return $objectresult;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
+
       // Utility
       public function utctolocal($date)
       {
