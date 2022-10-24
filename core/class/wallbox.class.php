@@ -457,16 +457,16 @@ class wallboxCmd extends cmd {
             $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
             $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
             $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
-            $eqlogic->getCmd(null,'energyconsumed')->setIsVisible(true);
-            $eqlogic->getCmd(null,'chargingtime')->setIsVisible(true);
-            $eqlogic->getCmd(null,'power')->setIsVisible(true);
+            $eqlogic->getCmd(null,'energyconsumed')->setIsVisible(true).save();
+            $eqlogic->getCmd(null,'chargingtime')->setIsVisible(true).save();
+            $eqlogic->getCmd(null,'power')->setIsVisible(true).save();
 
          }
          else
          {
-            $eqlogic->getCmd(null,'energyconsumed')->setIsVisible(false);
-            $eqlogic->getCmd(null,'chargingtime')->setIsVisible(false);
-            $eqlogic->getCmd(null,'power')->setIsVisible(false);
+            $eqlogic->getCmd(null,'energyconsumed')->setIsVisible(false).save();
+            $eqlogic->getCmd(null,'chargingtime')->setIsVisible(false).save();
+            $eqlogic->getCmd(null,'power')->setIsVisible(false).save();
          }
 
 
