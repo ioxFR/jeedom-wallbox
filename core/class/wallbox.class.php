@@ -349,6 +349,23 @@ if($username == null || $password == null){
          throw new Exception("User is not authenticated");
       }
    }
+
+      // Utility
+      public function utctolocal($date)
+      {
+         log::add('wallbox', 'debug', 'starting date conversion from UTC to local');
+         $time = new DateTime($date, new DateTimeZone('UTC'));
+         $tm_tz_from = $timeZone;
+         $localtimezone = date_default_timezone_get();
+         log::add('wallbox', 'debug', 'local timezone is defined on '.$localtimezone);
+         $tm_tz_to = new DateTimeZone($localtimezone);
+         $dt = new DateTime($date, new DateTimeZone($tm_tz_from));
+         $dt->setTimeZone(new DateTimeZone($tm_tz_to));
+         $utc_time_from =$dt->format("d-m-Y h:i:s");
+         log::add('wallbox', 'debug', 'Date converted '.$utc_time_from);
+   
+         return $utc_time_from;
+      }
    
    /*
    * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
@@ -401,7 +418,7 @@ class wallboxCmd extends cmd {
          
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
-         $eqlogic->checkAndUpdateCmd('lastsync', $this->utctolocal($info['last_sync']));
+         $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
          $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
          $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
          $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
@@ -413,23 +430,6 @@ class wallboxCmd extends cmd {
       
    }
 
-   // Utility
-   public function utctolocal($date)
-   {
-      log::add('wallbox', 'debug', 'starting date conversion from UTC to local');
-      $time = new DateTime($date, new DateTimeZone('UTC'));
-      $tm_tz_from = $timeZone;
-      $localtimezone = date_default_timezone_get();
-      log::add('wallbox', 'debug', 'local timezone is defined on '.$localtimezone);
-      $tm_tz_to = new DateTimeZone($localtimezone);
-      $dt = new DateTime($date, new DateTimeZone($tm_tz_from));
-      $dt->setTimeZone(new DateTimeZone($tm_tz_to));
-      $utc_time_from =$dt->format("d-m-Y h:i:s");
-      log::add('wallbox', 'debug', 'Date converted '.$utc_time_from);
-
-      return $utc_time_from;
-   }
-   
    /*     * **********************Getteur Setteur*************************** */
 }
 
