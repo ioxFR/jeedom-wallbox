@@ -31,7 +31,12 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement toutes les minutes par Jeedom
    public static function cron() {
-      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin
          if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
              $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
              if (!is_object($cmd)) {//Si la commande n'existe pas
@@ -46,7 +51,12 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
    public static function cron5() {
-      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin
          if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
              $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
              if (!is_object($cmd)) {//Si la commande n'existe pas
@@ -257,8 +267,6 @@ if($username == null || $password == null){
       $baseurl = "https://api.wall-box.com/";
       log::add('wallbox', 'debug', 'in authentication ' );
       // AUTHENTICATION
-      //$username = $this->getConfiguration("username");
-      //$password = $this->getConfiguration("password");
       $username = config::byKey("username", "wallbox");
       $password = config::byKey("password", "wallbox");
       
