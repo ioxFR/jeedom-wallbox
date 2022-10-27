@@ -467,6 +467,8 @@ class wallbox extends eqLogic {
             $data = '{"locked":0}'; // unlock id
          }
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
+
+         /*
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
@@ -478,9 +480,25 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          log::add('wallbox', 'debug', 'defineLockState '. $context);
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
-         log::add('wallbox', 'debug', 'defineLockState '. $result);
+         log::add('wallbox', 'debug', 'defineLockState '. $result);*/
 
-         $objectresult = json_decode($result,true);
+         $client = new http\Client;
+         $request = new http\Client\Request;
+         $request->setRequestUrl($baseurl.'charger/'.$chargerId);
+         $request->setRequestMethod('PUT');
+         $body = new http\Message\Body;
+         $body->append($data);
+         $request->setBody($body);
+         $request->setOptions(array());
+         $request->setHeaders(array(
+           'Accept' => 'application/json',
+           'Content-Type' => 'application/json;charset=UTF-8',
+           'Authorization' => 'Bearer '.$jwt
+         ));
+         $client->enqueue($request)->send();
+         $response = $client->getResponse();
+
+         $objectresult = json_decode($response->getBody(),true);
          return $objectresult;
       }
       else{
@@ -503,7 +521,11 @@ class wallbox extends eqLogic {
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
-            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
+            'header'  => array(
+               'Authorization: Bearer '.$jwt,
+               'Accept: application/json',
+               'Content-Type:application/json;charset=UTF-8'
+            ),
             'content' => http_build_query($data)
             )
          );
