@@ -441,7 +441,7 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);
-         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
+         log::add('wallbox', 'debug', 'defineChargingState '. $result);
 
          $objectresult = json_decode($result,true);
          return $objectresult;
@@ -456,15 +456,15 @@ class wallbox extends eqLogic {
    {
       $baseurl = "https://api.wall-box.com/v2/";
       $chargerId = $this->getConfiguration("chargerid");
-      log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
+      log::add('wallbox', 'debug', 'Define lock state '. $chargerId);
       $jwt = $this->getWallboxToken();
       
       if($jwt != null && $chargerId != null){
 
-         $data = '{"locked":1}'; //resume id
-         if(!$resume)
+         $data = '{"locked":1}'; //lock id
+         if(!$locked)
          {
-            $data = '{"locked":0}'; // pause id
+            $data = '{"locked":0}'; // unlock id
          }
 
          $opts = array('http' =>
@@ -478,7 +478,7 @@ class wallbox extends eqLogic {
          $context  = stream_context_create($opts);
          
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
-         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
+         log::add('wallbox', 'debug', 'defineLockState '. $result);
 
          $objectresult = json_decode($result,true);
          return $objectresult;
@@ -493,7 +493,7 @@ class wallbox extends eqLogic {
    {
       $baseurl = "https://api.wall-box.com/v2/";
       $chargerId = $this->getConfiguration("chargerid");
-      log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
+      log::add('wallbox', 'debug', 'Define max amp state '. $chargerId);
       $jwt = $this->getWallboxToken();
       
       if($jwt != null && $chargerId != null){
@@ -529,7 +529,7 @@ class wallbox extends eqLogic {
          $tm_tz_to = new DateTimeZone($localtimezone);
          $dt = new DateTime($date, new DateTimeZone('UTC'));
          $dt->setTimeZone(new DateTimeZone($tm_tz_to->getName()));
-         $utc_time_from =$dt->format("d-m-Y h:i:s");
+         $utc_time_from =$dt->format("d-m-Y H:i:s");
          log::add('wallbox', 'debug', 'Date converted '.$utc_time_from);
    
          return $utc_time_from;
