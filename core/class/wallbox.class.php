@@ -478,6 +478,7 @@ class wallbox extends eqLogic {
          );
          
          $context  = stream_context_create($opts);
+         var_dump($context);
          log::add('wallbox', 'debug', 'defineLockState '. $context);
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
          log::add('wallbox', 'debug', 'defineLockState '. $result);
