@@ -484,16 +484,16 @@ class wallbox extends eqLogic {
 
          $client = new http\Client;
          $request = new http\Client\Request;
-         $request->setRequestUrl($baseurl.'charger/'.$chargerId);
+         $request->setRequestUrl('https://api.wall-box.com/v2/charger/46367');
          $request->setRequestMethod('PUT');
          $body = new http\Message\Body;
-         $body->append($data);
+         $body->append('{"locked":1}');
          $request->setBody($body);
          $request->setOptions(array());
          $request->setHeaders(array(
            'Accept' => 'application/json',
            'Content-Type' => 'application/json;charset=UTF-8',
-           'Authorization' => 'Bearer '.$jwt
+           'Authorization' => 'Bearer '.$jwt,
          ));
          $client->enqueue($request)->send();
          $response = $client->getResponse();
