@@ -583,7 +583,7 @@ class wallboxCmd extends cmd {
       $eqlogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
       
       if ($this->getLogicalId() == 'refresh') {
-         
+         log::add('wallbox', 'info', 'execute refresh');
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
          $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
@@ -634,13 +634,14 @@ class wallboxCmd extends cmd {
       }
       else if ($this->getLogicalId() == 'chargecontrol')
       {
+         log::add('wallbox', 'info', 'execute chargecontrol');
          $info = $this->getEqLogic()->getChargerStatus();
          $statusid=$info['status_id'];
 
          if($statusid == 194)
          {
             // charging, we switch to pause
-            $this->getEqLogic()->getChargerStatus(false);
+            $this->getEqLogic()->defineChargingState(false);
          }
          else if($statusid == 182)
          {
@@ -650,6 +651,7 @@ class wallboxCmd extends cmd {
       }
       else if($this->getLogicalId() == 'lockcontrol')
       {
+         log::add('wallbox', 'info', 'execute lockcontrol');
          $info = $this->getEqLogic()->getChargerStatus();
          $statusid=$info['config_data']['locked'];
 
@@ -666,6 +668,7 @@ class wallboxCmd extends cmd {
       }
       else if($this->getLogicalId() == 'maxpower')
       {
+         log::add('wallbox', 'info', 'execute lockcontrol');
          $obj = $eqlogic->getCmd(null, 'maxpower');
 
          // charging, we switch to pause
