@@ -468,37 +468,22 @@ class wallbox extends eqLogic {
          }
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
 
-         /*
+         
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
             'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
-            'content' => http_build_query($data)
+            'content' => http_build_query(json_encode($data))
             )
          );
          
          $context  = stream_context_create($opts);
          log::add('wallbox', 'debug', 'defineLockState '. $context);
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
-         log::add('wallbox', 'debug', 'defineLockState '. $result);*/
+         log::add('wallbox', 'debug', 'defineLockState '. $result);
 
-         $client = new http\Client;
-         $request = new http\Client\Request;
-         $request->setRequestUrl('https://api.wall-box.com/v2/charger/46367');
-         $request->setRequestMethod('PUT');
-         $body = new http\Message\Body;
-         $body->append('{"locked":1}');
-         $request->setBody($body);
-         $request->setOptions(array());
-         $request->setHeaders(array(
-           'Accept' => 'application/json',
-           'Content-Type' => 'application/json;charset=UTF-8',
-           'Authorization' => 'Bearer '.$jwt,
-         ));
-         $client->enqueue($request)->send();
-         $response = $client->getResponse();
 
-         $objectresult = json_decode($response->getBody(),true);
+         $objectresult = json_decode($result,true);
          return $objectresult;
       }
       else{
