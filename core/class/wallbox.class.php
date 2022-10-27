@@ -473,7 +473,7 @@ class wallbox extends eqLogic {
          array(
             'method'  => 'PUT',
             'header'  => 'Authorization: Bearer '."$jwt \r\n".'Accept: application/json'."\r\n".'Content-Type:application/json;charset=UTF-8'."\r\n",
-            'content' => json_encode($data)
+            'content' => http_build_query($data)
             )
          );
          
