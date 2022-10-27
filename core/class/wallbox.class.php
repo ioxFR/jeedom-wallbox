@@ -433,7 +433,7 @@ class wallbox extends eqLogic {
          $opts = array('http' =>
          array(
             'method'  => 'POST',
-            'header'  => 'Authorization: Bearer '.$jwt,
+            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
             'content' => http_build_query($data)
             )
          );
@@ -470,7 +470,7 @@ class wallbox extends eqLogic {
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
-            'header'  => 'Authorization: Bearer '.$jwt,
+            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
             'content' => http_build_query($data)
             )
          );
@@ -503,7 +503,7 @@ class wallbox extends eqLogic {
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
-            'header'  => 'Authorization: Bearer '.$jwt,
+            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
             'content' => http_build_query($data)
             )
          );
