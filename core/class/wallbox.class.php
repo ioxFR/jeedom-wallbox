@@ -656,7 +656,7 @@ class wallboxCmd extends cmd {
          $statusid=$info['config_data']['locked'];
 
          log::add('wallbox', 'debug', 'statusid is '.$statusid);
-            $this->getEqLogic()->defineLockState(0);
+            $this->getEqLogic()->defineLockState($statusid);
 
       }
       else if($this->getLogicalId() == 'maxpower')
