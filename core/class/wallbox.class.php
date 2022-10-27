@@ -469,11 +469,11 @@ class wallbox extends eqLogic {
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
 
          
-         $opts = array('https' =>
+         $opts = array('http' =>
          array(
             'method'  => 'PUT',
-            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
-            'content' => http_build_query($data)
+            'header'  => 'Authorization: Bearer '."$jwt \r\n".'Accept: application/json'."\r\n".'Content-Type:application/json;charset=UTF-8'."\r\n",
+            'content' => json_encode($data)
             )
          );
          
