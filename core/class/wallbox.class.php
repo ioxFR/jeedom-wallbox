@@ -469,7 +469,7 @@ class wallbox extends eqLogic {
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
 
          
-         $opts = array('http' =>
+         $opts = array('https' =>
          array(
             'method'  => 'PUT',
             'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
@@ -478,7 +478,7 @@ class wallbox extends eqLogic {
          );
          
          $context  = stream_context_create($opts);
-         var_dump($context);
+
          log::add('wallbox', 'debug', 'defineLockState '. $context);
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
          log::add('wallbox', 'debug', 'defineLockState '. $result);
