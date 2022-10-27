@@ -462,7 +462,7 @@ class wallbox extends eqLogic {
       if($jwt != null && $chargerId != null){
 
          $data = '{"locked":1}'; //lock id
-         if(!$locked)
+         if($locked == 1)
          {
             $data = '{"locked":0}'; // unlock id
          }
@@ -655,16 +655,9 @@ class wallboxCmd extends cmd {
          $info = $this->getEqLogic()->getChargerStatus();
          $statusid=$info['config_data']['locked'];
 
-         if($statusid == 0)
-         {
-            // charging, we switch to pause
-            $this->getEqLogic()->defineLockState(true);
-         }
-         else if($statusid == 1)
-         {
-            // in pause, we resume charge
-            $this->getEqLogic()->defineLockState(false);
-         }
+         log::add('wallbox', 'debug', 'statusid is '.$statusid);
+            $this->getEqLogic()->defineLockState(0);
+
       }
       else if($this->getLogicalId() == 'maxpower')
       {
