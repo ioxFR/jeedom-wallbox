@@ -466,7 +466,7 @@ class wallbox extends eqLogic {
          {
             $data = '{"locked":0}'; // unlock id
          }
-
+         log::add('wallbox', 'debug', 'defineLockState  data'. $data);
          $opts = array('http' =>
          array(
             'method'  => 'PUT',
@@ -476,7 +476,7 @@ class wallbox extends eqLogic {
          );
          
          $context  = stream_context_create($opts);
-         log::add('wallbox', 'debug', 'defineLockState '. var_dump($context));
+         log::add('wallbox', 'debug', 'defineLockState '. $context);
          $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
          log::add('wallbox', 'debug', 'defineLockState '. $result);
 
