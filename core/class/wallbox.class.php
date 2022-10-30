@@ -514,15 +514,15 @@ class wallbox extends eqLogic {
          $responseobj = json_decode($response,true);
          $lockcontrol = $this->getCmd(null, 'lockcontrol');
          if($responseobj.["data"].["chargerData"].["locked"] == 1){
-         $lockcontrol->setName(__('Deverouiller le chargeur', __FILE__));
+         $lockcontrol->setName(__('Deverrouiller le chargeur', __FILE__));
       }
       else{
-         $lockcontrol->setName(__('Verouiller le chargeur', __FILE__));
+         $lockcontrol->setName(__('Verrouiller le chargeur', __FILE__));
       }
       $lockcontrol->save();
 
-      $eqlogic = $this->getEqLogic();
-      $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($responseobj.["data"].["chargerData"].["status"]));
+      /*$eqlogic = $this->getEqLogic();
+      $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($responseobj.["data"].["chargerData"].["status"]));*/
 
          return $responseobj;
       }
