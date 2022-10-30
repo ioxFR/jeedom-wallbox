@@ -696,6 +696,7 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($info['status_id']));
          
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
+         log::add('wallbox','info','current max power: '.$info['max_available_power']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
 
          if($statusid == 194){ // Waiting
@@ -774,9 +775,9 @@ class wallboxCmd extends cmd {
       {
          log::add('wallbox', 'info', 'execute maxpower');
          $obj = $eqlogic->getCmd(null, 'maxpower');
-         log::add('wallbox', 'info', 'setting value to'.$obj->getCmdValue());
+         log::add('wallbox', 'info', 'setting value to'.$obj->getValue());
          // we change max amp value
-         $this->getEqLogic()->defineMaxAmp($obj->getCmdValue());
+         $this->getEqLogic()->defineMaxAmp($obj->getValue());
 
       }
    }
