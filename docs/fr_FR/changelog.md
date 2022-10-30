@@ -2,9 +2,11 @@
 
 # 10/2022
 - Ajout de vérification de configuration du plugin avant de pouvoir effectuer l'ajout d'équipement ou l'activation des CRON
-- Correction sur le format de l'heure de la dernière synchronisation avec la borne UTC => Local Date Time
+- Correction sur le format de l'heure de la dernière synchronisation avec la borne UTC => Local Date Time (24h)
 - Ajout de la fonctionnalité de contrôle de charge via le widget
 - Ajout de la fonctionnalité de modification du maximum d'ampère d'un chargeur
+- Ajout de la fonctionnalité de verrouillage via le widget
+- Ajout de l'autorefresh par défaut
 
 # 30/01/2021
 - Implementation of API call to get chargers of account
