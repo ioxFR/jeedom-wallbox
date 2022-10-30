@@ -467,7 +467,7 @@ class wallbox extends eqLogic {
             $data = '{"locked":0}'; // unlock id
          }
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
-         $data = http_build_query($data);
+         /*$data = http_build_query($data);
          
          $opts = array('http' =>
          array(
@@ -484,8 +484,32 @@ class wallbox extends eqLogic {
          log::add('wallbox', 'debug', 'defineLockState '. $result);
 
 
-         $objectresult = json_decode($result,true);
-         return $objectresult;
+         $objectresult = json_decode($result,true);*/
+
+         $curl = curl_init();
+
+curl_setopt_array($curl, array(
+  CURLOPT_URL => 'https://api.wall-box.com/v2/charger/46367',
+  CURLOPT_RETURNTRANSFER => true,
+  CURLOPT_ENCODING => '',
+  CURLOPT_MAXREDIRS => 10,
+  CURLOPT_TIMEOUT => 0,
+  CURLOPT_FOLLOWLOCATION => true,
+  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+  CURLOPT_CUSTOMREQUEST => 'PUT',
+  CURLOPT_POSTFIELDS =>$data,
+  CURLOPT_HTTPHEADER => array(
+    'Accept: application/json',
+    'Content-Type: application/json',
+    'Authorization: Bearer '.$jwt,
+    'Cookie: _cfuvid=5AbnFbc0xnt7DTbC4snRgtuCBeb4FW3bh3q1LbPYpCM-1666847691510-0-604800000'
+  ),
+));
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+         return $response;
       }
       else{
          throw new Exception("User is not authenticated");
