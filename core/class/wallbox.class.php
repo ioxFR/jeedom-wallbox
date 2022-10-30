@@ -548,12 +548,12 @@ class wallbox extends eqLogic {
    {
       $baseurl = "https://api.wall-box.com/v2/";
       $chargerId = $this->getConfiguration("chargerid");
-      log::add('wallbox', 'debug', 'Define max amp state '. $chargerId);
+      log::add('wallbox', 'debug', 'Define max amp value '. $ampvalue);
       $jwt = $this->getWallboxToken();
       
       if($jwt != null && $chargerId != null){
 
-         $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //resume id
+         $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //amp value
 
          /*$opts = array('http' =>
          array(
