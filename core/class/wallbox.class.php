@@ -274,18 +274,20 @@ class wallbox extends eqLogic {
       $chargecontrol->setLogicalId('chargecontrol');
       $chargecontrol->setType('action');
       $chargecontrol->setSubType('other');
+      $chargecontrol->setDisplay('icon', '<i class="fa fa-stop"></i>');
       $chargecontrol->save();
 
       // Lock command action
       $lockcontrol = $this->getCmd(null, 'lockcontrol');
       if (!is_object($lockcontrol)) {
          $lockcontrol = new wallboxCmd();
-         $lockcontrol->setName(__('Verouiller le chargeur', __FILE__));
+         $lockcontrol->setName(__('Verrouillage/Déverrouillage du chargeur', __FILE__));
       }
       $lockcontrol->setEqLogic_id($this->getId());
       $lockcontrol->setLogicalId('lockcontrol');
       $lockcontrol->setType('action');
       $lockcontrol->setSubType('other');
+      $lockcontrol->setDisplay('icon', '<i class="fa fa-lock"></i>');
       $lockcontrol->save();
 
       // Amp command action
@@ -691,6 +693,21 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
 
          $statusid=$info['status_id'];
+
+         if($statusid == 182) 
+         {
+            //pause
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-play"></i>');
+            $obj->save();
+         }
+         else ($statusid == 194) 
+         {
+            // Charge
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-stop"></i>');
+            $obj->save();
+         }
 
          $eqlogic->checkAndUpdateCmd('status_id', $info['status_id']);
          $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($info['status_id']));
