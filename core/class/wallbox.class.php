@@ -292,6 +292,7 @@ class wallbox extends eqLogic {
 
       // Define auto refresh
       $this->setConfiguration('autorefresh','*/5 * * * *');
+      $this->save();
 
       // Amp command action
      /* $maxamp = $this->getCmd(null, 'maxamp');
