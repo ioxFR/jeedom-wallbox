@@ -694,6 +694,7 @@ class wallboxCmd extends cmd {
 
          $statusid=$info['status_id'];
 
+         // charge control icon
          if($statusid == 182) 
          {
             //pause
@@ -706,6 +707,22 @@ class wallboxCmd extends cmd {
             // Charge
             $obj = $eqlogic->getCmd(null, 'chargecontrol');
             $obj->setDisplay('icon', '<i class="fa fa-stop"></i>');
+            $obj->save();
+         }
+
+         // lock icon
+         if($statusid == 209) 
+         {
+            //locked
+            $obj = $eqlogic->getCmd(null, 'lockcontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-lock-open"></i>');
+            $obj->save();
+         }
+         else 
+         {
+            // other
+            $obj = $eqlogic->getCmd(null, 'lockcontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-lock"></i>');
             $obj->save();
          }
 
@@ -729,9 +746,9 @@ class wallboxCmd extends cmd {
             $obj = $eqlogic->getCmd(null, 'power');
             $obj->setIsVisible(1);
             $obj->save();
-            /*$obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
             $obj->setIsVisible(1);
-            $obj->save();*/
+            $obj->save();
          }
          else
          {
@@ -744,9 +761,9 @@ class wallboxCmd extends cmd {
             $obj = $eqlogic->getCmd(null, 'power');
             $obj->setIsVisible(0);
             $obj->save();
-            /*$obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
             $obj->setIsVisible(0);
-            $obj->save();*/
+            $obj->save();
          }
 
 
