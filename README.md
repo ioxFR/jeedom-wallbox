@@ -10,15 +10,20 @@ Jeedom plugin implementation for wallbox charger solution.
 
 ## How to get it
 
-Plugin is free from https://market.jeedom.com/index.php?v=d&p=market_display&id=4120
+Available from jeedom market and for free!
 
 ## Contribute
 
-Feel free to purpose some enhancement using PR :)
+Please check project tab for in progress task. Feel free to help and contribute!
 
 ## Support
 
 If you need help or got bug, please open issue from github.
+
+## Donators
+Thanks to all donators that help me to drink some coffees :)
+
+- Laurent Mario
 
 ## Donate
 

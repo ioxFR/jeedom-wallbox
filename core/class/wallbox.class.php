@@ -31,7 +31,12 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement toutes les minutes par Jeedom
    public static function cron() {
-      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin
          if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
              $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
              if (!is_object($cmd)) {//Si la commande n'existe pas
@@ -46,7 +51,12 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement toutes les 5 minutes par Jeedom
    public static function cron5() {
-      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin vdm
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
+      foreach (self::byType('wallbox') as $wallbox) {//parcours tous les équipements du plugin
          if ($wallbox->getIsEnable() == 1) {//vérifie que l'équipement est actif
              $cmd = $wallbox->getCmd(null, 'refresh');//retourne la commande "refresh si elle existe
              if (!is_object($cmd)) {//Si la commande n'existe pas
@@ -94,7 +104,14 @@ class wallbox extends eqLogic {
    
    // Fonction exécutée automatiquement avant la création de l'équipement 
    public function preInsert() {
+      $username = config::byKey("username", "wallbox");
+      $password = config::byKey("password", "wallbox");
+      if($username == null || $password == null){
+         throw new Exception("You must configure username and password to be able to use this plugin");
+      }
       
+      // Define auto refresh
+      $this->setConfiguration('autorefresh','*/5 * * * *');
    }
    
    // Fonction exécutée automatiquement après la création de l'équipement 
@@ -141,15 +158,15 @@ class wallbox extends eqLogic {
       }
       $maxpower->setLogicalId('maxpower');
       $maxpower->setEqLogic_id($this->getId());
-      $maxpower->setType('info');
-      $maxpower->setSubType('numeric');
+      $maxpower->setType('action');
+      $maxpower->setSubType('slider');
 		$maxpower->setUnite('Amp');
-      $power->setConfiguration('minValue' , '0');
-      $power->setConfiguration('maxValue' , '32');
+      $maxpower->setConfiguration('minValue' , '6');
+      $maxpower->setConfiguration('maxValue' , '32');
       $maxpower->save();
 
       // charging speed
-      $speed = $this->getCmd(null, 'speed');
+      /*$speed = $this->getCmd(null, 'speed');
       if (!is_object($speed)) {
          $speed = new wallboxCmd();
          $speed->setName(__('Vitesse de charge', __FILE__));
@@ -161,10 +178,10 @@ class wallbox extends eqLogic {
       $power->setConfiguration('minValue' , '0');
       $power->setConfiguration('maxValue' , '32');
 		$speed->setUnite('Amp/h');
-      $speed->save();
+      $speed->save();*/
 
       // state of charge
-      $chargestatus = $this->getCmd(null, 'chargestatus');
+      /*$chargestatus = $this->getCmd(null, 'chargestatus');
       if (!is_object($chargestatus)) {
          $chargestatus = new wallboxCmd();
          $chargestatus->setName(__('Statut de la charge', __FILE__));
@@ -173,7 +190,7 @@ class wallbox extends eqLogic {
       $chargestatus->setEqLogic_id($this->getId());
       $chargestatus->setType('info');
       $chargestatus->setSubType('string');
-      $chargestatus->save();
+      $chargestatus->save();*/
 
       // last sync
       $lastsync = $this->getCmd(null, 'lastsync');
@@ -186,6 +203,33 @@ class wallbox extends eqLogic {
       $lastsync->setType('info');
       $lastsync->setSubType('string');
       $lastsync->save();
+
+      // Charging Time
+      $chargingtime = $this->getCmd(null, 'chargingtime');
+      if (!is_object($chargingtime)) {
+         $chargingtime = new wallboxCmd();
+         $chargingtime->setName(__('Temps de charge', __FILE__));
+      }
+      $chargingtime->setLogicalId('chargingtime');
+      $chargingtime->setEqLogic_id($this->getId());
+      $chargingtime->setType('info');
+      $chargingtime->setSubType('string');
+      $chargingtime->save();
+
+      // Energie consommée
+      $energyconsumed = $this->getCmd(null, 'energyconsumed');
+      if (!is_object($energyconsumed)) {
+         $energyconsumed = new wallboxCmd();
+         $energyconsumed->setName(__('Energie consommée', __FILE__));
+      }
+      $energyconsumed->setLogicalId('energyconsumed');
+      $energyconsumed->setEqLogic_id($this->getId());
+      $energyconsumed->setType('info');
+      $energyconsumed->setSubType('numeric');
+		$energyconsumed->setUnite('Kwh');
+      $energyconsumed->setConfiguration('minValue' , '0');
+      $energyconsumed->setConfiguration('maxValue' , '60');
+      $energyconsumed->save();
       
       //status
       $status = $this->getCmd(null, 'status');
@@ -203,7 +247,7 @@ class wallbox extends eqLogic {
       $name = $this->getCmd(null, 'name');
       if (!is_object($name)) {
          $name = new wallboxCmd();
-         $name->setName(__('Name', __FILE__));
+         $name->setName(__('Nom', __FILE__));
       }
       $name->setLogicalId('name');
       $name->setEqLogic_id($this->getId());
@@ -222,6 +266,48 @@ class wallbox extends eqLogic {
       $refresh->setType('action');
       $refresh->setSubType('other');
       $refresh->save();
+
+      // Charge command action
+      $chargecontrol = $this->getCmd(null, 'chargecontrol');
+      if (!is_object($chargecontrol)) {
+         $chargecontrol = new wallboxCmd();
+         $chargecontrol->setName(__('Contrôle de la charge', __FILE__));
+      }
+      $chargecontrol->setEqLogic_id($this->getId());
+      $chargecontrol->setLogicalId('chargecontrol');
+      $chargecontrol->setType('action');
+      $chargecontrol->setSubType('other');
+      $chargecontrol->setDisplay('icon', '<i class="fa fa-stop"></i>');
+      $chargecontrol->save();
+
+      // Lock command action
+      $lockcontrol = $this->getCmd(null, 'lockcontrol');
+      if (!is_object($lockcontrol)) {
+         $lockcontrol = new wallboxCmd();
+         $lockcontrol->setName(__('Verrouillage & Déverrouillage du chargeur', __FILE__));
+      }
+      $lockcontrol->setEqLogic_id($this->getId());
+      $lockcontrol->setLogicalId('lockcontrol');
+      $lockcontrol->setType('action');
+      $lockcontrol->setSubType('other');
+      $lockcontrol->setDisplay('icon', '<i class="fa fa-lock"></i>');
+      $lockcontrol->save();
+
+
+      // Amp command action
+     /* $maxamp = $this->getCmd(null, 'maxamp');
+      if (!is_object($maxamp)) {
+         $maxamp = new wallboxCmd();
+         $maxamp->setName(__('Amperage maximum', __FILE__));
+      }
+      $maxamp->setEqLogic_id($this->getId());
+      $maxamp->setLogicalId('maxamp');
+      $maxamp->setType('action');
+      $maxamp->setSubType('numeric');
+		$maxamp->setUnite('Amp');
+      $maxamp->setConfiguration('minValue' , '1');
+      $maxamp->setConfiguration('maxValue' , '32');
+      $maxamp->save();*/
 
       // TODO: CRON Configuration
      /* $cron = cron::byClassAndFunction('weather', 'updateWeatherData', array('weather_id' => intval($this->getId())));
@@ -253,8 +339,6 @@ class wallbox extends eqLogic {
       $baseurl = "https://api.wall-box.com/";
       log::add('wallbox', 'debug', 'in authentication ' );
       // AUTHENTICATION
-      //$username = $this->getConfiguration("username");
-      //$password = $this->getConfiguration("password");
       $username = config::byKey("username", "wallbox");
       $password = config::byKey("password", "wallbox");
       
@@ -275,7 +359,7 @@ class wallbox extends eqLogic {
       
       
       if($objectresult['status'] == "200"){
-         log::add('wallbox', 'debug', 'Authentication ' . json_decode($result,true));
+         log::add('wallbox', 'information', 'Authentication Success');
          $token = $objectresult['jwt'];
          return $token;
       }
@@ -288,7 +372,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'start charger list');
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null){
          $opts = array('http' =>
          array(
@@ -318,7 +401,6 @@ class wallbox extends eqLogic {
       log::add('wallbox', 'debug', 'start for charger '. $chargerId);
       $jwt = $this->getWallboxToken();
       
-      log::add('wallbox', 'debug', 'jwt '. $jwt);
       if($jwt != null && $chargerId != null){
          $opts = array('http' =>
          array(
@@ -337,6 +419,229 @@ class wallbox extends eqLogic {
          throw new Exception("User is not authenticated");
       }
    }
+
+   // function to pause or resume charging
+   public function defineChargingState($resume)
+   {
+      $baseurl = "https://api.wall-box.com/v3/";
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'Define charging state '. $chargerId);
+      $jwt = $this->getWallboxToken();
+      
+      if($jwt != null && $chargerId != null){
+
+         $data = '{"action":1}'; //resume id
+         if(!$resume)
+         {
+            $data = '{"action":2}'; // pause id
+         }
+
+      /*   $opts = array('http' =>
+         array(
+            'method'  => 'POST',
+            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
+            'content' => http_build_query($data)
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+         
+         $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);*/
+
+         $curl = curl_init();
+
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v3/chargers/'.$chargerId.'/remote-action',
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'POST',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
+
+         $response = curl_exec($curl);
+
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineChargingState '. $response);
+
+         $objectresult = json_decode($response,true);
+         return $objectresult;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
+
+   // function to lock/unlock a charger
+   public function defineLockState($locked)
+   {
+      $baseurl = "https://api.wall-box.com/v2/";
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'Define lock state '. $chargerId);
+      $jwt = $this->getWallboxToken();
+      
+      if($jwt != null && $chargerId != null){
+
+         $data = '{"locked":1}'; //lock id
+         if($locked == 1)
+         {
+            $data = '{"locked":0}'; // unlock id
+         }
+         log::add('wallbox', 'debug', 'defineLockState  data'. $data);
+         /*$data = http_build_query($data);
+         
+         $opts = array('http' =>
+         array(
+            'method'  => 'PUT',
+            'header'  => array("Authorization: Bearer ".$jwt,"Accept: application/json","Content-Type: application/json;charset=UTF-8", "Content-Length: " . strlen($data),"Host: ".$SERVER_NAME ),
+            'content' => $data
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+
+         log::add('wallbox', 'debug', 'defineLockState '. $context);
+         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
+         log::add('wallbox', 'debug', 'defineLockState '. $result);
+
+
+         $objectresult = json_decode($result,true);*/
+
+         $curl = curl_init();
+
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v2/charger/'.$chargerId,
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'PUT',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
+
+         $response = curl_exec($curl);
+
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineLockState '. $response);
+
+         // Control Update
+         $responseobj = json_decode($response,true);
+
+         return $responseobj;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
+
+   // function to define max amp of a charge
+   public function defineMaxAmp($ampvalue)
+   {
+      $baseurl = "https://api.wall-box.com/v2/";
+      $chargerId = $this->getConfiguration("chargerid");
+      log::add('wallbox', 'debug', 'Define max amp value '. $ampvalue);
+      $jwt = $this->getWallboxToken();
+      
+      if($jwt != null && $chargerId != null){
+
+         $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //amp value
+
+         /*$opts = array('http' =>
+         array(
+            'method'  => 'PUT',
+            'header'  => array(
+               'Authorization: Bearer '.$jwt,
+               'Accept: application/json',
+               'Content-Type:application/json;charset=UTF-8'
+            ),
+            'content' => http_build_query($data)
+            )
+         );
+         
+         $context  = stream_context_create($opts);
+         
+         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);*/
+
+         $curl = curl_init();
+
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v2/charger/'.$chargerId,
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'PUT',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
+
+         $response = curl_exec($curl);
+
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineMaxAmp '. $response);
+         $objectresult = json_decode($response,true);
+         return $objectresult;
+      }
+      else{
+         throw new Exception("User is not authenticated");
+      }
+   }
+
+      // Utility
+      public function utctolocal($date)
+      {
+         log::add('wallbox', 'debug', 'starting date conversion from UTC to local');
+         $localtimezone = date_default_timezone_get();
+         log::add('wallbox', 'debug', 'local timezone is defined on '.$localtimezone);
+         $tm_tz_to = new DateTimeZone($localtimezone);
+         $dt = new DateTime($date, new DateTimeZone('UTC'));
+         $dt->setTimeZone(new DateTimeZone($tm_tz_to->getName()));
+         $utc_time_from =$dt->format("d-m-Y H:i:s");
+         log::add('wallbox', 'debug', 'Date converted '.$utc_time_from);
+   
+         return $utc_time_from;
+      }
+
+      public function statustotext($statusid)
+      {
+         switch($statusid)
+         {
+            case 209:
+               return 'Verrouillée';
+               break;
+            case 161:
+               return 'En attente';
+               break;
+            case 194:
+               return 'En charge';
+               break;
+            case 182:
+               return 'En pause';
+               break;
+         }
+      }
+   
    
    /*
    * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
@@ -386,21 +691,149 @@ class wallboxCmd extends cmd {
       $eqlogic = $this->getEqLogic(); //récupère l'éqlogic de la commande $this
       
       if ($this->getLogicalId() == 'refresh') {
-         
+         log::add('wallbox', 'info', 'execute refresh');
          $info = $this->getEqLogic()->getChargerStatus();
          $eqlogic->checkAndUpdateCmd('name', $info['name']);
-         $eqlogic->checkAndUpdateCmd('lastsync', $info['last_sync']);
-         $eqlogic->checkAndUpdateCmd('status', $info['status_description']);
-         $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
-         $eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
-         $eqlogic->checkAndUpdateCmd('chargestatus', $info['state_of_charge']);
-         $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
+         $eqlogic->checkAndUpdateCmd('lastsync', $this->getEqLogic()->utctolocal($info['last_sync']));
+
+         $statusid=$info['status_id'];
+
+         // charge control icon
+         if($statusid == 182) 
+         {
+            //pause
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-play"></i>');
+            $obj->save();
+         }
+         else if($statusid == 194) 
+         {
+            // Charge
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-stop"></i>');
+            $obj->save();
+         }
+
+         // lock icon
+         if($statusid == 209) 
+         {
+            //locked
+            $obj = $eqlogic->getCmd(null, 'lockcontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-lock-open"></i>');
+            $obj->save();
+         }
+         else 
+         {
+            // other
+            $obj = $eqlogic->getCmd(null, 'lockcontrol');
+            $obj->setDisplay('icon', '<i class="fa fa-lock"></i>');
+            $obj->save();
+         }
+
+         $eqlogic->checkAndUpdateCmd('status_id', $info['status_id']);
+         $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($info['status_id']));
          
+         //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
+         $maxchargingcurrent = $info['config_data']['max_charging_current'];
+         log::add('wallbox','info','current max power: '.$maxchargingcurrent);
+         
+         $obj = $eqlogic->getCmd(null, 'maxpower');
+         //$obj->setValue($maxchargingcurrent);
+         $obj->setConfiguration('maxValue' , $info['config_data']['max_available_current']);
+         $obj->save();
+         $eqlogic->checkAndUpdateCmd('maxpower', $maxchargingcurrent);
+
+         if($statusid == 194){ // Waiting
+            $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
+            $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
+            $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
+            $obj = $eqlogic->getCmd(null, 'energyconsumed');
+            $obj->setIsVisible(1);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargingtime');
+            $obj->setIsVisible(1);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'power');
+            $obj->setIsVisible(1);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setIsVisible(1);
+            $obj->save();
+         }
+         else
+         {
+            $obj = $eqlogic->getCmd(null, 'energyconsumed');
+            $obj->setIsVisible(0);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargingtime');
+            $obj->setIsVisible(0);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'power');
+            $obj->setIsVisible(0);
+            $obj->save();
+            $obj = $eqlogic->getCmd(null, 'chargecontrol');
+            $obj->setIsVisible(0);
+            $obj->save();
+         }
+
+
          return;
       }
-      
+      else if ($this->getLogicalId() == 'chargecontrol')
+      {
+         log::add('wallbox', 'info', 'execute chargecontrol');
+         $info = $this->getEqLogic()->getChargerStatus();
+         $statusid=$info['status_id'];
+
+         if($statusid == 194)
+         {
+            // charging, we switch to pause
+            $this->getEqLogic()->defineChargingState(false);
+         }
+         else if($statusid == 182)
+         {
+            // in pause, we resume charge
+            $this->getEqLogic()->defineChargingState(true);
+         }
+      }
+      else if($this->getLogicalId() == 'lockcontrol')
+      {
+         log::add('wallbox', 'info', 'execute lockcontrol');
+         $info = $this->getEqLogic()->getChargerStatus();
+         $locked=$info['config_data']['locked'];
+
+         log::add('wallbox', 'debug', 'locked is '.$locked);
+         $this->getEqLogic()->defineLockState($locked);
+
+         $eqlogic->getCmd(null, 'lockcontrol');
+         if($locked ==0){
+            $lockcontrol->setName(__('Verrouiller le chargeur', __FILE__));
+         }
+         else
+         {
+            $lockcontrol->setName(__('Déverrouiller le chargeur', __FILE__));
+         }
+
+      }
+      else if($this->getLogicalId() == 'maxpower')
+      {
+         $inputValue = $_options['slider'];
+         log::add('wallbox', 'info', 'execute maxpower');
+         $obj = $eqlogic->getCmd(null, 'maxpower');
+         log::add('wallbox', 'info', 'setting value to'.$inputValue);
+         // we change max amp value
+         $this->getEqLogic()->defineMaxAmp($inputValue);
+
+      }
    }
-   
+
+
+   public function sectohhmmss($seconds)
+   {
+      $seconds = round($seconds);
+      return sprintf('%02d:%02d:%02d', ($seconds/ 3600),($seconds/ 60 % 60), $seconds% 60);
+   }
+
    /*     * **********************Getteur Setteur*************************** */
 }
 
