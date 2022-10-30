@@ -244,7 +244,7 @@ class wallbox extends eqLogic {
       $name = $this->getCmd(null, 'name');
       if (!is_object($name)) {
          $name = new wallboxCmd();
-         $name->setName(__('Name', __FILE__));
+         $name->setName(__('Nom', __FILE__));
       }
       $name->setLogicalId('name');
       $name->setEqLogic_id($this->getId());
@@ -281,7 +281,7 @@ class wallbox extends eqLogic {
       $lockcontrol = $this->getCmd(null, 'lockcontrol');
       if (!is_object($lockcontrol)) {
          $lockcontrol = new wallboxCmd();
-         $lockcontrol->setName(__('Verrouillage/Déverrouillage du chargeur', __FILE__));
+         $lockcontrol->setName(__('Verrouillage & Déverrouillage du chargeur', __FILE__));
       }
       $lockcontrol->setEqLogic_id($this->getId());
       $lockcontrol->setLogicalId('lockcontrol');
@@ -289,6 +289,9 @@ class wallbox extends eqLogic {
       $lockcontrol->setSubType('other');
       $lockcontrol->setDisplay('icon', '<i class="fa fa-lock"></i>');
       $lockcontrol->save();
+
+      // Define auto refresh
+      $this->setConfiguration('autorefresh','*/5 * * * *');
 
       // Amp command action
      /* $maxamp = $this->getCmd(null, 'maxamp');
