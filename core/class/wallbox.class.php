@@ -735,6 +735,7 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('maxpower', $maxchargingcurrent);
          $obj = $eqlogic->getCmd(null, 'maxpower');
          $obj->setValue($maxchargingcurrent);
+         $obj->setConfiguration('maxValue' , $info['config_data']['max_available_current']);
          $obj->save();
 
          if($statusid == 194){ // Waiting
