@@ -698,6 +698,9 @@ class wallboxCmd extends cmd {
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          log::add('wallbox','info','current max power: '.$info['config_data']['max_charging_current']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['config_data']['max_charging_current']);
+         $obj = $eqlogic->getCmd(null, 'maxpower');
+         $obj->setValue($info['config_data']['max_charging_current']);
+         $obj->save();
 
          if($statusid == 194){ // Waiting
             $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
