@@ -696,8 +696,8 @@ class wallboxCmd extends cmd {
          $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($info['status_id']));
          
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
-         log::add('wallbox','info','current max power: '.$info['max_available_power']);
-         $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
+         log::add('wallbox','info','current max power: '.$info['config_data']['max_charging_current']);
+         $eqlogic->checkAndUpdateCmd('maxpower', $info['config_data']['max_charging_current']);
 
          if($statusid == 194){ // Waiting
             $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
@@ -774,6 +774,7 @@ class wallboxCmd extends cmd {
       else if($this->getLogicalId() == 'maxpower')
       {
          log::add('wallbox', 'info', 'execute maxpower');
+         log::add('wallbox','debug',print_r($_options));
          $obj = $eqlogic->getCmd(null, 'maxpower');
          log::add('wallbox', 'info', 'setting value to'.$obj->getLastValue());
          // we change max amp value
