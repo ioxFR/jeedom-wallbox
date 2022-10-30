@@ -290,10 +290,6 @@ class wallbox extends eqLogic {
       $lockcontrol->setDisplay('icon', '<i class="fa fa-lock"></i>');
       $lockcontrol->save();
 
-      // Define auto refresh
-      $this->setConfiguration('autorefresh','*/5 * * * *');
-      $this->save();
-
       // Amp command action
      /* $maxamp = $this->getCmd(null, 'maxamp');
       if (!is_object($maxamp)) {

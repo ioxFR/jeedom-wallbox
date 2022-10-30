@@ -152,7 +152,7 @@ foreach ($chargers as $charger) {
 </label>
 <div class="col-sm-7">
 <div class="input-group">
-<input type="text" class="eqLogicAttr form-control roundedLeft" data-l1key="configuration" data-l2key="autorefresh" placeholder="{{Cliquer sur ? pour afficher l'assistant cron}}"/>
+<input type="text" class="eqLogicAttr form-control roundedLeft" data-l1key="configuration" value="*/5 * * * *" data-l2key="autorefresh" placeholder="{{Cliquer sur ? pour afficher l'assistant cron}}"/>
 <span class="input-group-btn">
 <a class="btn btn-default cursor jeeHelper roundedRight" data-helper="cron" title="Assistant cron">
 <i class="fas fa-question-circle"></i>
