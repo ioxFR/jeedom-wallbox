@@ -775,9 +775,9 @@ class wallboxCmd extends cmd {
       {
          log::add('wallbox', 'info', 'execute maxpower');
          $obj = $eqlogic->getCmd(null, 'maxpower');
-         log::add('wallbox', 'info', 'setting value to'.$obj->getValue());
+         log::add('wallbox', 'info', 'setting value to'.$obj->getLastValue());
          // we change max amp value
-         $this->getEqLogic()->defineMaxAmp($obj->getValue());
+         $this->getEqLogic()->defineMaxAmp($obj->getLastValue());
 
       }
    }
