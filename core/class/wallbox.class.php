@@ -280,7 +280,7 @@ class wallbox extends eqLogic {
       $lockcontrol = $this->getCmd(null, 'lockcontrol');
       if (!is_object($lockcontrol)) {
          $lockcontrol = new wallboxCmd();
-         $lockcontrol->setName(__('Verouillage du chargeur', __FILE__));
+         $lockcontrol->setName(__('Verouiller le chargeur', __FILE__));
       }
       $lockcontrol->setEqLogic_id($this->getId());
       $lockcontrol->setLogicalId('lockcontrol');
@@ -488,28 +488,43 @@ class wallbox extends eqLogic {
 
          $curl = curl_init();
 
-curl_setopt_array($curl, array(
-  CURLOPT_URL => 'https://api.wall-box.com/v2/charger/46367',
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_ENCODING => '',
-  CURLOPT_MAXREDIRS => 10,
-  CURLOPT_TIMEOUT => 0,
-  CURLOPT_FOLLOWLOCATION => true,
-  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-  CURLOPT_CUSTOMREQUEST => 'PUT',
-  CURLOPT_POSTFIELDS =>$data,
-  CURLOPT_HTTPHEADER => array(
-    'Accept: application/json',
-    'Content-Type: application/json',
-    'Authorization: Bearer '.$jwt,
-    'Cookie: _cfuvid=5AbnFbc0xnt7DTbC4snRgtuCBeb4FW3bh3q1LbPYpCM-1666847691510-0-604800000'
-  ),
-));
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v2/charger/'.$chargerId,
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'PUT',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
 
-$response = curl_exec($curl);
+         $response = curl_exec($curl);
 
-curl_close($curl);
-         return $response;
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineLockState '. $response);
+
+         // Control Update
+         $responseobj = json_decode($response,true);
+         $lockcontrol = $this->getCmd(null, 'lockcontrol');
+         if($responseobj.["data"].["chargerData"].["locked"] == 1){
+         $lockcontrol->setName(__('Deverouiller le chargeur', __FILE__));
+      }
+      else{
+         $lockcontrol->setName(__('Verouiller le chargeur', __FILE__));
+      }
+      $lockcontrol->save();
+
+      $eqlogic = $this->getEqLogic();
+      $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($responseobj.["data"].["chargerData"].["status"]));
+
+         return $responseobj;
       }
       else{
          throw new Exception("User is not authenticated");
@@ -566,6 +581,26 @@ curl_close($curl);
    
          return $utc_time_from;
       }
+
+      public function statustotext($statusid)
+      {
+         switch($statusid)
+         {
+            case 209:
+               return 'Verrouillée';
+               break;
+            case 161:
+               return 'En attente';
+               break;
+            case 194:
+               return 'En charge';
+               break;
+            case 182:
+               return 'En pause';
+               break;
+         }
+      }
+   
    
    /*
    * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
@@ -623,7 +658,7 @@ class wallboxCmd extends cmd {
          $statusid=$info['status_id'];
 
          $eqlogic->checkAndUpdateCmd('status_id', $info['status_id']);
-         $eqlogic->checkAndUpdateCmd('status', $this->statustotext($info['status_id']));
+         $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($info['status_id']));
          
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
@@ -702,24 +737,6 @@ class wallboxCmd extends cmd {
       }
    }
 
-   public function statustotext($statusid)
-   {
-      switch($statusid)
-      {
-         case 209:
-            return 'Verrouillée';
-            break;
-         case 161:
-            return 'En attente';
-            break;
-         case 194:
-            return 'En charge';
-            break;
-         case 182:
-            return 'En pause';
-            break;
-      }
-   }
 
    public function sectohhmmss($seconds)
    {
