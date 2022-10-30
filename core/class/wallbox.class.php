@@ -512,17 +512,6 @@ class wallbox extends eqLogic {
 
          // Control Update
          $responseobj = json_decode($response,true);
-         $lockcontrol = $this->getCmd(null, 'lockcontrol');
-         if($responseobj.["data"].["chargerData"].["locked"] == 1){
-         $lockcontrol->setName(__('Deverrouiller le chargeur', __FILE__));
-      }
-      else{
-         $lockcontrol->setName(__('Verrouiller le chargeur', __FILE__));
-      }
-      $lockcontrol->save();
-
-      /*$eqlogic = $this->getEqLogic();
-      $eqlogic->checkAndUpdateCmd('status', $this->getEqLogic()->statustotext($responseobj.["data"].["chargerData"].["status"]));*/
 
          return $responseobj;
       }
@@ -663,7 +652,7 @@ class wallboxCmd extends cmd {
          //$eqlogic->checkAndUpdateCmd('speed', $info['charging_speed']);
          $eqlogic->checkAndUpdateCmd('maxpower', $info['max_available_power']);
 
-         if($statusid == 194){
+         if($statusid == 194){ // Waiting
             $eqlogic->checkAndUpdateCmd('power', $info['charging_power']);
             $eqlogic->checkAndUpdateCmd('chargingtime', $this->sectohhmmss($info['charging_time']));// in second
             $eqlogic->checkAndUpdateCmd('energyconsumed',$info['added_energy']); // kwh
@@ -720,10 +709,19 @@ class wallboxCmd extends cmd {
       {
          log::add('wallbox', 'info', 'execute lockcontrol');
          $info = $this->getEqLogic()->getChargerStatus();
-         $statusid=$info['config_data']['locked'];
+         $locked=$info['config_data']['locked'];
 
-         log::add('wallbox', 'debug', 'statusid is '.$statusid);
-            $this->getEqLogic()->defineLockState($statusid);
+         log::add('wallbox', 'debug', 'locked is '.$locked);
+         $this->getEqLogic()->defineLockState($locked);
+
+         $eqlogic->getCmd(null, 'lockcontrol');
+         if($locked ==0){
+            $lockcontrol->setName(__('Verrouiller le chargeur', __FILE__));
+         }
+         else
+         {
+            $lockcontrol->setName(__('Déverrouiller le chargeur', __FILE__));
+         }
 
       }
       else if($this->getLogicalId() == 'maxpower')
