@@ -430,7 +430,7 @@ class wallbox extends eqLogic {
             $data = '{"action":2}'; // pause id
          }
 
-         $opts = array('http' =>
+      /*   $opts = array('http' =>
          array(
             'method'  => 'POST',
             'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
@@ -440,10 +440,33 @@ class wallbox extends eqLogic {
          
          $context  = stream_context_create($opts);
          
-         $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);
-         log::add('wallbox', 'debug', 'defineChargingState '. $result);
+         $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);*/
 
-         $objectresult = json_decode($result,true);
+         $curl = curl_init();
+
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v3/chargers/'.$chargerId.'/remote-action',
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'POST',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
+
+         $response = curl_exec($curl);
+
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineChargingState '. $response);
+
+         $objectresult = json_decode($response,true);
          return $objectresult;
       }
       else{
@@ -532,7 +555,7 @@ class wallbox extends eqLogic {
 
          $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //resume id
 
-         $opts = array('http' =>
+         /*$opts = array('http' =>
          array(
             'method'  => 'PUT',
             'header'  => array(
@@ -546,9 +569,32 @@ class wallbox extends eqLogic {
          
          $context  = stream_context_create($opts);
          
-         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
-         log::add('wallbox', 'debug', 'defineMaxAmp '. $result);
-         $objectresult = json_decode($result,true);
+         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);*/
+
+         $curl = curl_init();
+
+         curl_setopt_array($curl, array(
+         CURLOPT_URL => 'https://api.wall-box.com/v2/charger/'.$chargerId,
+         CURLOPT_RETURNTRANSFER => true,
+         CURLOPT_ENCODING => '',
+         CURLOPT_MAXREDIRS => 10,
+         CURLOPT_TIMEOUT => 0,
+         CURLOPT_FOLLOWLOCATION => true,
+         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+         CURLOPT_CUSTOMREQUEST => 'PUT',
+         CURLOPT_POSTFIELDS =>$data,
+         CURLOPT_HTTPHEADER => array(
+            'Accept: application/json',
+            'Content-Type: application/json',
+            'Authorization: Bearer '.$jwt
+         ),
+         ));
+
+         $response = curl_exec($curl);
+
+         curl_close($curl);
+         log::add('wallbox', 'debug', 'defineMaxAmp '. $response);
+         $objectresult = json_decode($response,true);
          return $objectresult;
       }
       else{
