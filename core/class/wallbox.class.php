@@ -701,7 +701,7 @@ class wallboxCmd extends cmd {
             $obj->setDisplay('icon', '<i class="fa fa-play"></i>');
             $obj->save();
          }
-         else ($statusid == 194) 
+         else if($statusid == 194) 
          {
             // Charge
             $obj = $eqlogic->getCmd(null, 'chargecontrol');
