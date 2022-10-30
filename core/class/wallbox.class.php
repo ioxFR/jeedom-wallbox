@@ -156,7 +156,7 @@ class wallbox extends eqLogic {
       $maxpower->setLogicalId('maxpower');
       $maxpower->setEqLogic_id($this->getId());
       $maxpower->setType('action');
-      $maxpower->setSubType('numeric');
+      $maxpower->setSubType('cursor');
 		$maxpower->setUnite('Amp');
       $maxpower->setConfiguration('minValue' , '0');
       $maxpower->setConfiguration('maxValue' , '32');
