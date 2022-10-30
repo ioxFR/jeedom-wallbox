@@ -158,7 +158,7 @@ class wallbox extends eqLogic {
       $maxpower->setType('action');
       $maxpower->setSubType('slider');
 		$maxpower->setUnite('Amp');
-      $maxpower->setConfiguration('minValue' , '0');
+      $maxpower->setConfiguration('minValue' , '6');
       $maxpower->setConfiguration('maxValue' , '32');
       $maxpower->save();
 
