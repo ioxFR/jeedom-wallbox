@@ -109,6 +109,9 @@ class wallbox extends eqLogic {
       if($username == null || $password == null){
          throw new Exception("You must configure username and password to be able to use this plugin");
       }
+      
+      // Define auto refresh
+      $this->setConfiguration('autorefresh','*/5 * * * *');
    }
    
    // Fonction exécutée automatiquement après la création de l'équipement 
@@ -289,6 +292,7 @@ class wallbox extends eqLogic {
       $lockcontrol->setSubType('other');
       $lockcontrol->setDisplay('icon', '<i class="fa fa-lock"></i>');
       $lockcontrol->save();
+
 
       // Amp command action
      /* $maxamp = $this->getCmd(null, 'maxamp');
