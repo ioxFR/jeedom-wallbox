@@ -30,7 +30,7 @@ class wallbox extends eqLogic {
    /*     * ***********************Methode static*************************** */
    
    // Fonction exécutée automatiquement toutes les minutes par Jeedom
-   public static function cron() {
+   /*public static function cron() {
       $username = config::byKey("username", "wallbox");
       $password = config::byKey("password", "wallbox");
       if($username == null || $password == null){
@@ -45,7 +45,7 @@ class wallbox extends eqLogic {
              $cmd->execCmd(); // la commande existe on la lance
          }
      }
-   }
+   }*/
    
    
    
