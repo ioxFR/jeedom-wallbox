@@ -21,6 +21,7 @@ else{
 ?>
 
 <script type="text/javascript">
+	//Function to display the charger image depending of selected charger
 	$(function() {
 		$('#chargerselect').change(function(){
 			$("img[id^='img-']").hide();
@@ -150,10 +151,6 @@ foreach ($chargers as $charger) {
 	echo '<option value="'.$charger['id'].'">'.$charger['name'].'</option>';
 }
 ?>
-<option value="23333">charger1</option>
-<option value="33333">charger2</option>
-<option value="44444">charger3</option>
-<option value="55555">charger4</option>
 </select>
 </div>
 </div>
@@ -184,9 +181,8 @@ foreach ($chargers as $charger) {
 <div class="text-center">
 	<?php
 	foreach ($chargers as $charger) {
-		echo '<img name="icon_visu" alt="23333" id="img-23333" src="" style="max-width:160px;" />';
+		echo '<img name="icon_visu" alt="'.$charger['id'].'" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" />';
 	}
-	echo '<img name="icon_visu" alt="'.$charger['id'].'" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" />';
 	?>
 </div>
 </div>
