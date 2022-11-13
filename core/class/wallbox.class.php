@@ -135,6 +135,19 @@ class wallbox extends eqLogic {
    }
    
    public function postSave() {
+
+// Charger image
+$power = $this->getCmd(null, 'chargerimg');
+if (!is_object($power)) {
+   $power = new wallboxCmd();
+   $power->setName(__('Image', __FILE__));
+}
+$power->setLogicalId('chargerimg');
+$power->setEqLogic_id($this->getId());
+$power->setType('info');
+$power->setSubType('string'); 
+$power->save();
+
       // Charging power
       $power = $this->getCmd(null, 'power');
       if (!is_object($power)) {
