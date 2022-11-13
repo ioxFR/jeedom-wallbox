@@ -449,18 +449,6 @@ $power->save();
             $data = '{"action":2}'; // pause id
          }
 
-      /*   $opts = array('http' =>
-         array(
-            'method'  => 'POST',
-            'header'  => array('Authorization: Bearer '.$jwt,'Accept: application/json','Content-Type:application/json;charset=UTF-8'),
-            'content' => http_build_query($data)
-            )
-         );
-         
-         $context  = stream_context_create($opts);
-         
-         $result = file_get_contents($baseurl.'chargers/'.$chargerId.'/remote-action', false, $context);*/
-
          $curl = curl_init();
 
          curl_setopt_array($curl, array(
@@ -509,24 +497,6 @@ $power->save();
             $data = '{"locked":0}'; // unlock id
          }
          log::add('wallbox', 'debug', 'defineLockState  data'. $data);
-         /*$data = http_build_query($data);
-         
-         $opts = array('http' =>
-         array(
-            'method'  => 'PUT',
-            'header'  => array("Authorization: Bearer ".$jwt,"Accept: application/json","Content-Type: application/json;charset=UTF-8", "Content-Length: " . strlen($data),"Host: ".$SERVER_NAME ),
-            'content' => $data
-            )
-         );
-         
-         $context  = stream_context_create($opts);
-
-         log::add('wallbox', 'debug', 'defineLockState '. $context);
-         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);
-         log::add('wallbox', 'debug', 'defineLockState '. $result);
-
-
-         $objectresult = json_decode($result,true);*/
 
          $curl = curl_init();
 
@@ -573,22 +543,6 @@ $power->save();
       if($jwt != null && $chargerId != null){
 
          $data = '{ "maxChargingCurrent":'.$ampvalue.'}'; //amp value
-
-         /*$opts = array('http' =>
-         array(
-            'method'  => 'PUT',
-            'header'  => array(
-               'Authorization: Bearer '.$jwt,
-               'Accept: application/json',
-               'Content-Type:application/json;charset=UTF-8'
-            ),
-            'content' => http_build_query($data)
-            )
-         );
-         
-         $context  = stream_context_create($opts);
-         
-         $result = file_get_contents($baseurl.'charger/'.$chargerId, false, $context);*/
 
          $curl = curl_init();
 
