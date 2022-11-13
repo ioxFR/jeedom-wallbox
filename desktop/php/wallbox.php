@@ -21,9 +21,11 @@ else{
 ?>
 
 <script type="text/javascript">
+	$(function() {
 $('#chargerselect').bind('change',function(){
    $('#img-*').hide();
 $('#img-'+this.value).show();
+});
 });
 </script>
 
