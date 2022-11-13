@@ -20,6 +20,13 @@ else{
 }else{$charger = [];}
 ?>
 
+<script type="text/javascript">
+$('#chargerselect').bind('change',function(){
+   $('#img-*').hide();
+$('#img-'+this.value).show();
+});
+</script>
+
 <div class="row row-overflow">
 <!-- Page d'accueil du plugin -->
 <div class="col-xs-12 eqLogicThumbnailDisplay">
@@ -135,7 +142,7 @@ foreach (jeedom::getConfiguration('eqLogic:category') as $key => $value) {
 <div class="form-group">
 <label class="col-sm-3 control-label">{{Chargeur}}</label>
 <div class="col-sm-7">
-<select class="form-control eqLogicAttr" data-l1key="configuration" data-l2key="chargerid">
+<select class="form-control eqLogicAttr" id="chargerselect" data-l1key="configuration" data-l2key="chargerid" >
 <?php
 foreach ($chargers as $charger) {
 	echo '<option value="'.$charger['id'].'">'.$charger['name'].'</option>';
@@ -169,7 +176,11 @@ foreach ($chargers as $charger) {
 <legend><i class="fas fa-info"></i> {{Informations}}</legend>
 <div class="form-group">
 <div class="text-center">
-<img name="icon_visu" src="<?= $plugin->getPathImgIcon(); ?>" style="max-width:160px;"/>
+	<?php
+	foreach ($chargers as $charger) {
+		echo '<img name="icon_visu" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" hidden/>';
+	}
+	?>
 </div>
 </div>
 </div>
