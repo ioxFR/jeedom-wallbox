@@ -22,13 +22,11 @@ else{
 
 <script type="text/javascript">
 	$(function() {
-		
-$('#chargerselect').change(function(){
-	console.log("on change");
-   $('#img-*').hide();
-$('#img-'+this.value).show();
-});
-});
+		$('#chargerselect').change(function(){
+			$("img[id^='img-']").hide();
+			$('#img-'+this.value).show();
+		});
+	});
 </script>
 
 <div class="row row-overflow">
