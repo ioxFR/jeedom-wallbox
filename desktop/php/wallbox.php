@@ -148,6 +148,10 @@ foreach ($chargers as $charger) {
 	echo '<option value="'.$charger['id'].'">'.$charger['name'].'</option>';
 }
 ?>
+<option value="23333">charger1</option>
+<option value="33333">charger2</option>
+<option value="44444">charger3</option>
+<option value="55555">charger4</option>
 </select>
 </div>
 </div>
@@ -178,7 +182,7 @@ foreach ($chargers as $charger) {
 <div class="text-center">
 	<?php
 	foreach ($chargers as $charger) {
-		echo '<img name="icon_visu" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" hidden/>';
+		echo '<img name="icon_visu" alt="'.$charger['id'].'" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" hidden/>';
 	}
 	?>
 </div>
