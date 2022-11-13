@@ -22,6 +22,7 @@ else{
 
 <script type="text/javascript">
 	$(function() {
+		console.log("on change");
 $('#chargerselect').bind('change',function(){
    $('#img-*').hide();
 $('#img-'+this.value).show();
