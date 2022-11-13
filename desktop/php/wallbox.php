@@ -186,8 +186,9 @@ foreach ($chargers as $charger) {
 <div class="text-center">
 	<?php
 	foreach ($chargers as $charger) {
-		echo '<img name="icon_visu" alt="'.$charger['id'].'" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" hidden/>';
+		echo '<img name="icon_visu" alt="23333" id="img-23333" src="" style="max-width:160px;" />';
 	}
+	echo '<img name="icon_visu" alt="'.$charger['id'].'" id="img-'.$charger['id'].'" src="'.$charger['image'].'" style="max-width:160px;" />';
 	?>
 </div>
 </div>
