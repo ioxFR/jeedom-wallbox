@@ -433,6 +433,10 @@ $power->save();
       }
    }
 
+   public function getChargerUri(){
+      return $this->getConfiguration("chargeruri");
+   }
+
    // function to pause or resume charging
    public function defineChargingState($resume)
    {

@@ -26,6 +26,8 @@ else{
 		$('#chargerselect').change(function(){
 			$("img[id^='img-']").hide();
 			$('#img-'+this.value).show();
+			$imguri = $('#img-'+this.value).attr('src');
+			$('#chargeuri').val($imguri);
 		});
 	});
 </script>
@@ -178,6 +180,7 @@ foreach ($chargers as $charger) {
 <div class="col-lg-5">
 <legend><i class="fas fa-info"></i> {{Informations}}</legend>
 <div class="form-group">
+	<input type="hidden" id="chargeruri" data-l1key="configuration" data-l2key="chargeruri" />
 <div class="text-center">
 	<?php
 	foreach ($chargers as $charger) {
