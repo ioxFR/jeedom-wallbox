@@ -615,12 +615,12 @@ $power->save();
       }
 
       public function toHtml($_version = 'dashboard') {  
-         /* 
+         
          // a n'utiliser que si dans la config de l'eqLogic, on laisse le choix a l'user d'utiliser le widget du plugin, ou les widget par défaut du core
           if ($this->getConfiguration('widgetTemplate') != 1) {
            return parent::toHtml($_version);
          } 
-         */
+         
          
          $replace = $this->preToHtml($_version); // initialise les tag standards : #id#, #name# ...
          
