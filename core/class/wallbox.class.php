@@ -145,6 +145,7 @@ if (!is_object($power)) {
 $power->setLogicalId('chargerimg');
 $power->setEqLogic_id($this->getId());
 $power->setType('info');
+$info->setTemplate('dashboard','img');
 $power->setSubType('string'); 
 $power->save();
 
@@ -612,14 +613,38 @@ $power->save();
                break;
          }
       }
-   
-   
-   /*
-   * Non obligatoire : permet de modifier l'affichage du widget (également utilisable par les commandes)
-   public function toHtml($_version = 'dashboard') {
-      
-   }
-   */
+
+      public function toHtml($_version = 'dashboard') {  
+         /* 
+         // a n'utiliser que si dans la config de l'eqLogic, on laisse le choix a l'user d'utiliser le widget du plugin, ou les widget par défaut du core
+          if ($this->getConfiguration('widgetTemplate') != 1) {
+           return parent::toHtml($_version);
+         } 
+         */
+         
+         $replace = $this->preToHtml($_version); // initialise les tag standards : #id#, #name# ...
+         
+         if (!is_array($replace)) {
+           return $replace;
+         }
+         
+         $version = jeedom::versionAlias($_version);
+         
+         $replace['#device_img#'] = $this->getConfiguration('chargerimg'); // ton tag perso
+         $replace['#device_name#'] = $this->getConfiguration('chargerid'); // ton tag perso
+         
+         /* plusieurs lignes séparées pour comprendre */
+         $getTemplate = getTemplate('core', $version, 'cmd.info.string.img', __CLASS__); // on récupère le template 'propluvia.template' du plugin.
+         $template_replace = template_replace($replace, $getTemplate); // on remplace les tags
+         $postToHtml = $this->postToHtml($_version,$template_replace); // on met en cache le widget, si la config de l'user le permet.
+         return $postToHtml; // renvoie le code du template du widget.
+         
+         /* 
+         // Ces 4 lignes ci-dessus peuvent être concaténer comme ceci : 
+         return $this->postToHtml($_version, template_replace($replace, getTemplate('core', $version, 'propluvia.template' , __CLASS__)));
+         */
+         
+       }
    
    /*
    * Non obligatoire : permet de déclencher une action après modification de variable de configuration
