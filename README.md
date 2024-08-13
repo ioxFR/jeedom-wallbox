@@ -13,8 +13,9 @@ Jeedom plugin implementation for wallbox charger solution.
 Available from jeedom market and for free!
 
 ## Contribute
-
 Please check project tab for in progress task. Feel free to help and contribute!
+Looking for someone to support and maitain this project. If you are interested, please send me a message about that!
+I can continue to contribute but my free time is very low at this moment...
 
 ## Support
 
