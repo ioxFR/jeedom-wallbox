@@ -336,7 +336,7 @@ class wallbox extends eqLogic {
    
    // Function to get authentication JWT based on basic auth
    public function getWallboxToken(){     
-      $baseurl = "https://api.wall-box.com/";
+      $baseurl = "https://user-api.wall-box.com/";
       log::add('wallbox', 'debug', 'in authentication ' );
       // AUTHENTICATION
       $username = config::byKey("username", "wallbox");
@@ -348,22 +348,36 @@ class wallbox extends eqLogic {
       $opts = array('http' =>
       array(
          'method'  => 'GET',
-         'header'  => 'Authorization: Basic '.$authenticationencoded
+		 'header'  => [
+			 'Authorization: Basic '.$authenticationencoded,
+			 'Partner: wallbox'
+		 ]
          )
       );
       
       $context  = stream_context_create($opts);
       
-      $result = file_get_contents($baseurl.'auth/token/user', false, $context);
+      $result = file_get_contents($baseurl.'users/signin', false, $context);
       $objectresult = json_decode($result,true);
+
+      // Access response headers
+      $responseHeaders = $http_response_header ?? [];
+      $statusCode = null;
+
+      if (!empty($responseHeaders[0])) {
+         preg_match('/\d{3}/', $responseHeaders[0], $matches);
+	     $statusCode = (int) ($matches[0] ?? 0);
+      }      
+	   
+      log::add('wallbox','information','HTTP response:'.$responseHeaders[0]);      
       
-      
-      if($objectresult['status'] == "200"){
+      if($statusCode == "200"){
          log::add('wallbox', 'information', 'Authentication Success');
-         $token = $objectresult['jwt'];
+	     $token = $objectresult["data"]["attributes"]["token"];
+	     log::add('wallbox','information','Token='.$token);
          return $token;
       }
-      throw new Exception($objectresult);
+      throw new Exception("Authentication error");
    }
    
    // Function to get a list of chargers
